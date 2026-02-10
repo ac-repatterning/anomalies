@@ -49,9 +49,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--codes', type=specific.codes,
                         help='Expects a string of one or more comma separated gauge time series codes.')
-    parser.add_argument('--request', type=specific.request, default=0,
-                        help=('Expects an integer; 0 initial, 1 live, '
-                              '2 on-demand inference, 3 warning period inference.'))
+    parser.add_argument('--request', type=specific.stage, default='live',
+                        help=('Expects a string; either (a) initial, i.e., anomaly detection via pre-live models, '
+                              'or (b) live, i.e., anomaly detection via live models'))
     args: argparse.Namespace = parser.parse_args()
 
     connector: boto3.session.Session
