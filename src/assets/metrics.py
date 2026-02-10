@@ -40,11 +40,9 @@ class Metrics:
         """
 
         origin = (f'{self.__arguments.get('prefix').get('metrics')}/disaggregates/points/'
-                  f'{specification.catchment_id}/{specification.ts_id}')
+                  f'{specification.catchment_id}/{specification.ts_id}.json')
         target = os.path.join(
-            self.__configurations.data_, 'metrics', str(specification.catchment_id), str(specification.ts_id))
-
-        self.__directories.create(target)
+            self.__configurations.data_, 'metrics')
 
         return self.__directives.unload(
             source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
