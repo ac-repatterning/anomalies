@@ -1,4 +1,4 @@
-name: 'Hydrography: Inference ↠ Long Short-Term Memory Models [repatterning/arc-rnn-lstm]'
+name: 'Hydrography: Anomaly Detection'
 
 on: [push]
 
