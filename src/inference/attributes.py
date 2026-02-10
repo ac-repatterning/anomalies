@@ -46,7 +46,6 @@ class Attributes:
 
         attribute = atr.Attribute(
             modelling=self.__get_request(uri=os.path.join(path, 'modelling.json')),
-            scaling=self.__get_request(uri=os.path.join(path, 'scaling.json')),
-            n_points_future=self.__arguments.get('n_points_future'))
+            scaling=self.__get_request(uri=os.path.join(path, 'scaling.json')))
 
         return attribute
