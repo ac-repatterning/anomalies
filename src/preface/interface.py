@@ -44,28 +44,17 @@ class Interface:
 
         return arguments
 
-    def __get_arguments(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters,
-                        args: argparse.Namespace) -> dict:
+    def __get_arguments(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters) -> dict:
         """
 
         :param connector:
         :param s3_parameters:
-        :param args:
         :return:
         """
 
         key_name = self.__configurations.arguments_key
         arguments = src.s3.configurations.Configurations(connector=connector).objects(key_name=key_name)
         arguments: dict = self.__set_source(arguments=arguments.copy(), s3_parameters=s3_parameters)
-
-        # Codes
-        if args.codes is not None:
-            arguments['series']['excerpt'] = args.codes
-        else:
-            arguments['series']['excerpt'] = None
-
-        # Request
-        arguments['request'] = args.request
 
         return arguments
 
@@ -77,24 +66,20 @@ class Interface:
         :return:
         """
 
-        match arguments.get('request'):
-            case 0:
+        match arguments.get('stage'):
+            case 'initial':
                 arguments['prefix'] = arguments.get('inference').get('initial')
-            case 1:
+            case 'live':
                 arguments['prefix'] = arguments.get('inference').get('live')
-            case 2:
-                arguments['prefix'] = arguments.get('inference').get('service')
-            case 3:
-                arguments['prefix'] = arguments.get('inference').get('warning')
             case _:
-                raise ValueError(f'Unknown request code: {arguments.get('request')}')
+                raise ValueError(f'Unknown stage: {arguments.get('stage')}')
 
         return arguments
 
     def exc(self, args: argparse.Namespace) -> typing.Tuple[boto3.session.Session, s3p.S3Parameters, sr.Service, dict]:
         """
 
-        :param args: Wherein -> codes: list[int] | None, live: 0 | 1 | 2 | 3
+        :param args: Wherein -> codes: list[int] | None
         :return:
         """
 
@@ -106,8 +91,9 @@ class Interface:
             connector=connector, region_name=s3_parameters.region_name).exc()
 
         # Arguments
-        arguments: dict = self.__get_arguments(connector=connector, s3_parameters=s3_parameters, args=args)
+        arguments: dict = self.__get_arguments(connector=connector, s3_parameters=s3_parameters)
         arguments: dict = self.__prefix(arguments=arguments)
+        arguments['series'] = {'excerpt': args.codes} if args.codes is not None else {'excerpt': None}
 
         # Setting up
         src.preface.setup.Setup(service=service, s3_parameters=s3_parameters).exc()
