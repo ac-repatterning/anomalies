@@ -23,7 +23,7 @@ class Data:
         """
 
         frequency = 1.0 if arguments.get('frequency') == "h" else float(arguments.get('frequency').removesuffix("h"))
-        days = arguments.get('prefix').get('n_samples_use_')
+        days = round(365 * arguments.get('spanning'))
         self.__n_samples = int(days * 24 / frequency)
 
         # Configurations
