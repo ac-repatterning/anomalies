@@ -5,7 +5,6 @@ import multiprocessing
 import dask
 import pandas as pd
 
-import src.elements.approximations as apr
 import src.elements.attribute as atr
 import src.elements.master as mr
 import src.elements.specification as sc
@@ -63,9 +62,9 @@ class Interface:
             attribute: atr.Attribute = __get_attributes(specification=specification)
             data: pd.DataFrame = __get_data(specification=specification, attribute=attribute)
             master: mr.Master = self.__set_transforms(data=data, scaling=attribute.scaling)
-            approximations: apr.Approximations = __approximating(
+            estimates: pd.DataFrame = __approximating(
                 specification=specification, attribute=attribute, master=master)
-            message = __persist(specification=specification, approximations=approximations)
+            message = __persist(specification=specification, estimates=estimates)
             computations.append(message)
 
         messages = dask.compute(computations, scheduler='processes', num_workers=int(0.5*self.__n_cores))[0]
