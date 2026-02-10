@@ -1,5 +1,5 @@
 """Module interface.py"""
-import logging
+
 import pandas as pd
 
 import src.assets.artefacts
