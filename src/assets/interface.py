@@ -1,4 +1,5 @@
 """Module interface.py"""
+import logging
 import pandas as pd
 
 import src.assets.artefacts
@@ -41,6 +42,9 @@ class Interface:
         # The gauge stations in focus
         metadata = src.assets.metadata.Metadata(
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc()
+        metadata.info()
+        metadata = metadata.copy()[:5]
+        logging.info(metadata)
 
         # Reference
         reference: pd.DataFrame = src.assets.reference.Reference(
