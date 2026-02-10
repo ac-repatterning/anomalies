@@ -1,3 +1,4 @@
+"""Module metrics.py"""
 import logging
 import os
 
@@ -12,6 +13,9 @@ import src.functions.directories
 
 
 class Metrics:
+    """
+    Unloads gauge station model metrics
+    """
 
     def __init__(self, s3_parameters: s3p.S3Parameters, arguments: dict):
         """
