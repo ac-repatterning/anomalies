@@ -13,13 +13,12 @@ class Attributes:
     Attributes
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self):
         """
 
-        :param arguments:
+        Constructor
         """
 
-        self.__arguments = arguments
 
         # Instances
         self.__configurations = config.Config()
