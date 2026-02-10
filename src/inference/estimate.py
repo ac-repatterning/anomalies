@@ -80,6 +80,7 @@ class Estimate:
 
         return instances
 
+    # noinspection PyUnresolvedReferences
     def exc(self, model: tf.keras.models.Sequential, master: mr.Master):
         """
 
