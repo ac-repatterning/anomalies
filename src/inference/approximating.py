@@ -16,13 +16,11 @@ class Approximating:
     Under Development
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self):
         """
 
-        :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
+        Constructor
         """
-
-        self.__arguments = arguments
 
         # configurations
         self.__configurations = config.Config()
