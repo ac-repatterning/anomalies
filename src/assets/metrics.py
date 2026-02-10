@@ -8,8 +8,6 @@ import config
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 import src.s3.directives
-import src.functions.directories
-
 
 
 class Metrics:
@@ -30,9 +28,8 @@ class Metrics:
 
         self.__configurations = config.Config()
         self.__directives =  src.s3.directives.Directives()
-        self.__directories = src.functions.directories.Directories()
 
-    def __acquire(self, specification: sc.Specification):
+    def __get_metrics(self, specification: sc.Specification):
         """
 
         :param specification: Refer to src.elements.specification.py
@@ -55,7 +52,7 @@ class Metrics:
         """
 
         # Or
-        computations = [dask.delayed(self.__acquire)(specification=specification)
+        computations = [dask.delayed(self.__get_metrics)(specification=specification)
                         for specification in specifications]
 
         # Compute
