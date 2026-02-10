@@ -25,6 +25,7 @@ def main():
     specifications = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc(
         limits=src.limits.Limits(arguments=arguments).exc())
+    logger.info(specifications)
 
     # Inference
     src.inference.interface.Interface(arguments=arguments).exc(
