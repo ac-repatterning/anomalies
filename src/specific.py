@@ -1,6 +1,5 @@
 """Module specific.py"""
 import argparse
-import logging
 import sys
 
 import src.functions.cache
@@ -38,3 +37,18 @@ class Specific:
             raise err from err
 
         return _codes
+
+    def stage(self, value: str='live') -> str:
+        """
+
+        :param value:
+        :return:
+        """
+
+        if value in {'initial', 'live'}:
+            return value
+
+        self.__cache.exc()
+        sys.exit(('The optional parameter --stage expects strings: '
+                  '  * initial: i.e., anomaly detection via pre-live models, or\n'
+                  '  * live: i.e., anomaly detection via live models'))
