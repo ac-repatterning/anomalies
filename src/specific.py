@@ -38,27 +38,3 @@ class Specific:
             raise err from err
 
         return _codes
-
-    def request(self, value: str='0') -> int:
-        """
-
-        :param value:
-        :return:
-        """
-
-        try:
-            _value = int(value)
-        except argparse.ArgumentTypeError as err:
-            logging.info(('The optional parameter --request expects an integer; '
-                          '0 indicates pre-live models, 1 indicates latest live models, '
-                          '2 indicates on-demand inference service, 3 indicates warning period inference.'))
-            self.__cache.exc()
-            raise err from err
-
-        if _value in {0, 1, 2, 3}:
-            return _value
-
-        self.__cache.exc()
-        sys.exit(('The optional parameter --request expects an integer; '
-                  '0 indicates pre-live models, 1 indicates latest live models, '
-                  '2 indicates on-demand inference service, 3 indicates warning period inference.'))
