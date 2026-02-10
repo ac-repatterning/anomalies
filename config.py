@@ -21,14 +21,9 @@ class Config:
         excluded for names such as warehouse, storage, depository, *key, etc.<br><br>
         """
 
-        '''
-        Keys:
-          The metadata prefix/path is in relation to a cloud configurations bucket.
-        '''
-        self.architecture = 'arc-rnn-lstm'
         self.s3_parameters_key = 's3_parameters.yaml'
-        self.arguments_key = f'architectures/{self.architecture}/arguments.json'
-        self.metadata_ = f'architectures/{self.architecture}/inference/external'
+        self.arguments_key = f'data/anomalies/arguments.json'
+        self.metadata_ = ''
 
 
         '''
