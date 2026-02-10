@@ -21,6 +21,10 @@ def main():
     logger.info('CPU: %s', tf.config.list_physical_devices('CPU'))
     logger.info('GPU: %s', gpu)
 
+    src.assets.interface.Interface(
+        service=service, s3_parameters=s3_parameters, arguments=arguments).exc(
+        limits=src.limits.Limits(arguments=arguments).exc())
+
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
 
@@ -42,6 +46,7 @@ if __name__ == '__main__':
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
+    import src.limits
     import src.preface.interface
     import src.specific
 
@@ -49,7 +54,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--codes', type=specific.codes,
                         help='Expects a string of one or more comma separated gauge time series codes.')
-    parser.add_argument('--request', type=specific.stage, default='live',
+    parser.add_argument('--stage', type=specific.stage, default='live',
                         help=('Expects a string; either (a) initial, i.e., anomaly detection via pre-live models, '
                               'or (b) live, i.e., anomaly detection via live models'))
     args: argparse.Namespace = parser.parse_args()
