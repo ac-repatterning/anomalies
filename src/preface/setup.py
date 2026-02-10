@@ -2,6 +2,7 @@
 Module setup.py
 """
 import sys
+import os
 
 import config
 import src.elements.s3_parameters as s3p
@@ -58,7 +59,7 @@ class Setup:
 
         self.__directories.cleanup(path=self.__configurations.data_)
 
-        return self.__directories.create(path=self.__configurations.data_)
+        return self.__directories.create(path=os.path.join(self.__configurations.data_, 'metrics'))
 
     def __local(self) -> bool:
         """
