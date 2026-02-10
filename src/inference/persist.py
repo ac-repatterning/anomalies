@@ -5,7 +5,6 @@ import os
 import pandas as pd
 
 import config
-import src.elements.approximations as apr
 import src.elements.specification as sc
 import src.functions.objects
 
