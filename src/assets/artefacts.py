@@ -31,7 +31,7 @@ class Artefacts:
         self.__directives =  src.s3.directives.Directives()
         self.__directories = src.functions.directories.Directories()
 
-    def __acquire(self, specification: sc.Specification):
+    def __get_artefacts(self, specification: sc.Specification):
         """
 
         :param specification: Refer to src.elements.specification.py
@@ -56,7 +56,7 @@ class Artefacts:
         """
 
         # Or
-        computations = [dask.delayed(self.__acquire)(specification=specification)
+        computations = [dask.delayed(self.__get_artefacts)(specification=specification)
                         for specification in specifications]
 
         # Compute
