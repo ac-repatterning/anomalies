@@ -38,8 +38,7 @@ class Artefacts:
         :return:
         """
 
-        stage = self.__arguments.get('prefix').get('model')
-        origin = (f'{self.__arguments.get('modelling').get('path').get(stage)}/'
+        origin = (f'{self.__arguments.get('prefix').get('artefacts')}/'
                   f'{specification.catchment_id}/{specification.ts_id}')
         target = os.path.join(
             self.__configurations.data_, 'artefacts', str(specification.catchment_id), str(specification.ts_id))
