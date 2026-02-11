@@ -53,6 +53,6 @@ class Approximating:
 
         estimates: pd.DataFrame = src.inference.estimate.Estimate(attribute=attribute).exc(
             model=model, master=master)
-        self.__differences.exc(estimates=estimates, specification=specification)
+        estimates = self.__differences.exc(estimates=estimates.copy(), specification=specification)
 
         return estimates
