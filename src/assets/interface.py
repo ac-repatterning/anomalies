@@ -43,7 +43,7 @@ class Interface:
         # The gauge stations in focus
         metadata = src.assets.metadata.Metadata(
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc()
-        metadata = metadata.copy()[:4]
+        metadata = metadata.copy()[:2]
 
         # Reference
         reference: pd.DataFrame = src.assets.reference.Reference(
