@@ -25,6 +25,7 @@ class Differences:
 
     def __get_quantiles(self, uri: str) -> dict:
         """
+        These are percentage error quantiles vis-à-vis forecasting models.
 
         :param uri:
         :return:
@@ -42,9 +43,11 @@ class Differences:
         :return:
         """
 
+        # Read-in the testing stage percentage error quantiles
         uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
         quantiles = self.__get_quantiles(uri=uri)
 
+        # An anomaly vis-à-vis quantiles metrics?
         points: np.ndarray = estimates['p_error'].values
         states: np.ndarray = np.where((points < quantiles.get('l_whisker_e')) | (points > quantiles.get('u_whisker_e')),
                                       1, 0)
