@@ -36,13 +36,13 @@ class Metrics:
         :return:
         """
 
-        origin = (f'{self.__arguments.get('prefix').get('metrics')}/disaggregates/points/'
-                  f'{specification.catchment_id}/{specification.ts_id}.json')
+        origin = (f'{self.__arguments.get('prefix').get('metrics')}/metrics/disaggregates/points/'
+                  f'{specification.ts_id}.json')
         target = os.path.join(
             self.__configurations.data_, 'metrics')
 
         return self.__directives.unload(
-            source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
+            source_bucket=self.__s3_parameters.external, origin=origin, target=target, recursive='')
 
     def exc(self, specifications: list[sc.Specification]):
         """
