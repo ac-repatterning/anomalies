@@ -74,6 +74,7 @@ class Data:
         :return:
         """
 
+        data['original'] = data.copy()['measure']
         data['measure'] = data['measure'].ffill().values
 
         return data
