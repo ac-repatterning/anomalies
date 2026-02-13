@@ -35,6 +35,23 @@ class Differences:
 
         return  {k: v for k, v in zip(data['columns'], data['data'][0])}
 
+    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification):
+
+        # Read-in the testing stage percentage error quantiles
+        uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
+        quantiles = self.__get_quantiles(uri=uri)
+
+        median = quantiles.get('median')
+        l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
+        u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
+        print('BOUNDARIES: ', l_boundary, ', ', u_boundary, ', (', median, ')')
+
+        # An anomaly vis-à-vis quantiles metrics?
+        states: np.ndarray = np.where((points < l_boundary) | (points > u_boundary),
+                                      1, 0)
+
+        return states
+
     def exc(self, estimates: pd.DataFrame, specification: sc.Specification):
         """
 
@@ -43,19 +60,12 @@ class Differences:
         :return:
         """
 
-        # Read-in the testing stage percentage error quantiles
-        uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
-        quantiles = self.__get_quantiles(uri=uri)
 
-        # An anomaly vis-à-vis quantiles metrics?
+
+
         points: np.ndarray = estimates['p_error'].values
-        median = quantiles.get('median')
-        l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
-        u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
-        print('BOUNDARIES: ', l_boundary, ', ', u_boundary, ', (', median, ')')
+        states = self.__plausible_anomalies(points=points, specification=specification)
 
-        states: np.ndarray = np.where((points < l_boundary) | (points > u_boundary),
-                                      1, 0)
         estimates = estimates.assign(f_anomaly=states)
 
         print('ANOMALIES: ', estimates['f_anomaly'].sum())
