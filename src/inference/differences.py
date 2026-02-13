@@ -23,23 +23,18 @@ class Differences:
         self.__objects = src.functions.objects.Objects()
         self.__configurations = config.Config()
 
-    def __get_quantiles(self, uri: str) -> dict:
+    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification):
         """
-        These are percentage error quantiles vis-à-vis forecasting models.
 
-        :param uri:
+        :param points:
+        :param specification:
         :return:
         """
 
-        data = self.__objects.read(uri=uri)['q_testing']
-
-        return  {k: v for k, v in zip(data['columns'], data['data'][0])}
-
-    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification):
-
-        # Read-in the testing stage percentage error quantiles
+        # Error quantiles
         uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
-        quantiles = self.__get_quantiles(uri=uri)
+        data = self.__objects.read(uri=uri)['q_testing']
+        quantiles = {k: v for k, v in zip(data['columns'], data['data'][0])}
 
         median = quantiles.get('median')
         l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
