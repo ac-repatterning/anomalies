@@ -49,8 +49,16 @@ class Differences:
 
         # An anomaly vis-à-vis quantiles metrics?
         points: np.ndarray = estimates['p_error'].values
-        states: np.ndarray = np.where((points < quantiles.get('l_whisker_e')) | (points > quantiles.get('u_whisker_e')),
+        median = quantiles.get('median')
+        l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
+        u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
+        print('BOUNDARIES: ', l_boundary, ', ', u_boundary, ', (', median, ')')
+
+        states: np.ndarray = np.where((points < l_boundary) | (points > u_boundary),
                                       1, 0)
         estimates = estimates.assign(f_anomaly=states)
+
+        print('ANOMALIES: ', estimates['f_anomaly'].sum())
+        print(estimates.loc[estimates['f_anomaly'] == 1, :])
 
         return estimates
