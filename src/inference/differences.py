@@ -23,7 +23,7 @@ class Differences:
         self.__objects = src.functions.objects.Objects()
         self.__configurations = config.Config()
 
-    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification):
+    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification) -> np.ndarray:
         """
 
         :param points:
@@ -41,10 +41,9 @@ class Differences:
         u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
 
         # An anomaly vis-à-vis quantiles metrics?
-        states: np.ndarray = np.where((points < l_boundary) | (points > u_boundary),
-                                      1, 0)
+        p_anomalies: np.ndarray = np.where((points < l_boundary) | (points > u_boundary), 1, 0)
 
-        return states
+        return p_anomalies
 
     def exc(self, estimates: pd.DataFrame, specification: sc.Specification):
         """
@@ -55,8 +54,7 @@ class Differences:
         """
 
         points: np.ndarray = estimates['p_error'].values
-        states = self.__plausible_anomalies(points=points, specification=specification)
-
-        estimates = estimates.assign(f_anomaly=states)
+        p_anomalies = self.__plausible_anomalies(points=points, specification=specification)
+        estimates = estimates.assign(p_anomaly=p_anomalies)
 
         return estimates
