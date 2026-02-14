@@ -1,8 +1,6 @@
 """Module inference/interface.py"""
 import logging
-import multiprocessing
 
-import dask
 import pandas as pd
 
 import src.elements.attribute as atr
@@ -27,19 +25,7 @@ class Interface:
 
         # Setting up
         self.__scaling = src.inference.scaling.Scaling()
-        self.__n_cores = multiprocessing.cpu_count()
-
-    def __set_transforms(self, data: pd.DataFrame, scaling: dict) -> mr.Master:
-        """
-
-        :param data:
-        :param scaling:
-        :return:
-        """
-
-        transforms = self.__scaling.transform(data=data, scaling=scaling)
-
-        return mr.Master(data=data, transforms=transforms)
+        self.__approximating = src.inference.approximating.Approximating()
 
     def exc(self, attribute: atr.Attribute, data: pd.DataFrame, specification: sc.Specification):
         """
@@ -50,10 +36,9 @@ class Interface:
         :return:
         """
 
-        __approximating = dask.delayed(src.inference.approximating.Approximating().exc)
-
-        master: mr.Master = self.__set_transforms(data=data, scaling=attribute.scaling)
-        estimates: pd.DataFrame = __approximating(
+        transforms = self.__scaling.transform(data=data, scaling=attribute.scaling)
+        master: mr.Master = mr.Master(data=data, transforms=transforms)
+        estimates: pd.DataFrame = self.__approximating.exc(
             specification=specification, attribute=attribute, master=master)
 
         return estimates
