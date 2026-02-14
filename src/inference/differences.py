@@ -1,9 +1,8 @@
 """Module differences.py"""
-import logging
 import os
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 import config
 import src.elements.specification as sc
@@ -25,6 +24,7 @@ class Differences:
 
     def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification) -> np.ndarray:
         """
+        {k: v for k, v in zip(data['columns'], data['data'][0])}
 
         :param points:
         :param specification:
@@ -34,7 +34,7 @@ class Differences:
         # Error quantiles
         uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
         data = self.__objects.read(uri=uri)['q_testing']
-        quantiles = {k: v for k, v in zip(data['columns'], data['data'][0])}
+        quantiles = dict(zip(data['columns'], data['data'][0]))
 
         median = quantiles.get('median')
         l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
