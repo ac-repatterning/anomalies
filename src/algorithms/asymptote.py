@@ -1,4 +1,4 @@
-
+"""Module asymptote.py"""
 import numpy as np
 import pandas as pd
 
@@ -11,6 +11,12 @@ class Asymptote:
 
     @staticmethod
     def __get_boundaries(_data: pd.Series):
+        """
+        This function determines the areas along a series wherein there are N or more consecutive non-changing values.
+
+        :param _data: The series in focus.
+        :return:
+        """
 
         difference = _data.copy().diff()
 
@@ -26,6 +32,11 @@ class Asymptote:
         return np.concat([zeros[1:], [0]])
 
     def exc(self, blob: pd.Series) -> np.ndarray:
+        """
+
+        :param blob:
+        :return:
+        """
 
         __frame = pd.DataFrame(data={'original': blob.values})
         __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
