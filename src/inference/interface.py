@@ -9,7 +9,7 @@ import src.elements.attribute as atr
 import src.elements.master as mr
 import src.elements.specification as sc
 import src.inference.approximating
-import src.inference.attributes
+import src.algorithms.attributes
 import src.inference.data
 import src.inference.persist
 import src.inference.scaling
@@ -52,7 +52,7 @@ class Interface:
         :return:
         """
 
-        __get_attributes = dask.delayed(src.inference.attributes.Attributes().exc)
+        __get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
         __get_data = dask.delayed(src.inference.data.Data(arguments=self.__arguments).exc)
         __approximating = dask.delayed(src.inference.approximating.Approximating().exc)
         __persist = dask.delayed(src.inference.persist.Persist().exc)
