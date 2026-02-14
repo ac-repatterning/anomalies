@@ -1,4 +1,4 @@
-"""Module differences.py"""
+"""Module plausible_anomalies.py"""
 import os
 
 import numpy as np
@@ -9,7 +9,7 @@ import src.elements.specification as sc
 import src.functions.objects
 
 
-class Differences:
+class PlausibleAnomalies:
     """
     Differences
     """
