@@ -14,11 +14,20 @@ class Gap:
     """
 
     def __init__(self, arguments: dict):
+        """
+
+        :param arguments:
+        """
 
         self.__settings: dict = arguments.get('detecting').get('gap')
 
     @staticmethod
     def __get_boundaries(_data: pd.Series):
+        """
+
+        :param _data:
+        :return:
+        """
 
         # Set NaN points to 1?
         __values=_data.isna().astype(int)
@@ -50,7 +59,7 @@ class Gap:
 
         frame = estimates.copy()
 
-        instances = pd.DataFrame(data={'original': frame[self.__settings.get('field')].values})
+        instances = pd.DataFrame(data={'original': frame['original'].values})
         instances['boundary'] = self.__get_boundaries(_data=instances['original'])
         instances['element'] = instances['boundary'].bfill()
         instances['gap'] = instances['element'].where(instances['element'] >= (self.__settings.get('length') - 1), 0)
