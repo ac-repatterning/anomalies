@@ -13,8 +13,9 @@ class Gap:
     Context: Cases whereby N or more consecutive points have a NaN value.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, arguments: dict):
+
+        self.__settings: dict = arguments.get('detecting').get('gap')
 
     @staticmethod
     def __get_boundaries(_data: pd.Series):
@@ -40,11 +41,20 @@ class Gap:
 
         return np.concat([zeros[1:], [0]])
 
-    def exc(self, blob: pd.Series) -> np.ndarray:
+    def exc(self, estimates: pd.DataFrame) -> pd.DataFrame:
+        """
+        
+        :param estimates:
+        :return:
+        """
 
-        instances = pd.DataFrame(data={'original': blob.values})
+        frame = estimates.copy()
+
+        instances = pd.DataFrame(data={'original': frame[self.__settings.get('field')].values})
         instances['boundary'] = self.__get_boundaries(_data=instances['original'])
         instances['element'] = instances['boundary'].bfill()
-        instances['gap'] = instances['element'].where(instances['element'] >= 3, 0)
+        instances['gap'] = instances['element'].where(instances['element'] >= (self.__settings.get('length') - 1), 0)
 
-        return instances['gap'].values
+        frame = frame.assign(gap=instances['gap'].values)
+
+        return frame
