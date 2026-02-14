@@ -9,7 +9,6 @@ import src.elements.attribute as atr
 import src.elements.master as mr
 import src.elements.specification as sc
 import src.inference.estimate
-import src.inference.differences
 
 
 class Approximating:
@@ -24,7 +23,7 @@ class Approximating:
         """
 
         self.__configurations = config.Config()
-        self.__differences = src.inference.differences.Differences()
+
 
     # noinspection PyUnresolvedReferences
     def __get_model(self, specification: sc.Specification):
@@ -53,6 +52,5 @@ class Approximating:
 
         estimates: pd.DataFrame = src.inference.estimate.Estimate(attribute=attribute).exc(
             model=model, master=master)
-        estimates = self.__differences.exc(estimates=estimates.copy(), specification=specification)
 
         return estimates
