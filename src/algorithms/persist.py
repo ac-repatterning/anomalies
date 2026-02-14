@@ -55,8 +55,11 @@ class Persist:
         :return:
         """
 
+        gaps = estimates.copy().loc[estimates['gap'] != 0, ['timestamp', 'original', 'measure', 'gap']]
+
         nodes = {
-            'estimates': self.__get_node(estimates.drop(columns=['date', 'ts_id']))
+            'estimates': self.__get_node(blob=estimates.drop(columns=['date', 'ts_id'])),
+            'gaps': self.__get_node(blob=gaps)
         }
         nodes.update(specification._asdict())
 
