@@ -5,11 +5,11 @@ import multiprocessing
 import dask
 import pandas as pd
 
-import src.elements.attribute as atr
-import src.elements.specification as sc
 import src.algorithms.attributes
 import src.algorithms.data
 import src.algorithms.persist
+import src.elements.attribute as atr
+import src.elements.specification as sc
 import src.inference.interface
 
 
@@ -47,7 +47,7 @@ class Interface:
             data: pd.DataFrame = __get_data(specification=specification, attribute=attribute)
             estimates: pd.DataFrame = __get_special_anomalies(attribute=attribute, data=data, specification=specification)
 
-            message = __persist(specification=specification, estimates=...)
+            message = __persist(specification=specification, estimates=estimates)
             computations.append(message)
 
         messages = dask.compute(computations, scheduler='processes', num_workers=int(0.5*self.__n_cores))[0]
