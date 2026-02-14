@@ -6,7 +6,11 @@ import pandas as pd
 # noinspection DuplicatedCode
 class Gap:
     """
-    The focus is gaps.  Contexts whereby N or more consecutive points have a NaN value
+
+    <b>Vis-à-vis raw measures series</b>
+    --------------------------------<br>
+
+    Context: Cases whereby N or more consecutive points have a NaN value.
     """
 
     def __init__(self):
