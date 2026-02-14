@@ -4,7 +4,7 @@ import pandas as pd
 
 
 # noinspection DuplicatedCode
-class Flatline:
+class Asymptote:
 
     def __init__(self):
         pass
