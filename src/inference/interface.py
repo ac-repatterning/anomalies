@@ -10,7 +10,7 @@ import src.elements.master as mr
 import src.elements.specification as sc
 import src.inference.approximating
 import src.algorithms.attributes
-import src.inference.data
+import src.algorithms.data
 import src.inference.persist
 import src.inference.scaling
 
@@ -53,7 +53,7 @@ class Interface:
         """
 
         __get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
-        __get_data = dask.delayed(src.inference.data.Data(arguments=self.__arguments).exc)
+        __get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __approximating = dask.delayed(src.inference.approximating.Approximating().exc)
         __persist = dask.delayed(src.inference.persist.Persist().exc)
 
