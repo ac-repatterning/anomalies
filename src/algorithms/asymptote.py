@@ -5,6 +5,13 @@ import pandas as pd
 
 # noinspection DuplicatedCode
 class Asymptote:
+    """
+
+    <b>Vis-à-vis raw measures series</b>
+    --------------------------------<br>
+
+    Context: Cases whereby there are N or more consecutive non-changing values.
+    """
 
     def __init__(self):
         pass
@@ -12,7 +19,7 @@ class Asymptote:
     @staticmethod
     def __get_boundaries(_data: pd.Series):
         """
-        This function determines the areas along a series wherein there are N or more consecutive non-changing values.
+        This function determines the areas along a series whereby there are N or more consecutive non-changing values.
 
         :param _data: The series in focus.
         :return:
