@@ -9,8 +9,6 @@ import src.elements.attribute as atr
 import src.elements.master as mr
 import src.elements.specification as sc
 import src.inference.approximating
-
-import src.inference.persist
 import src.inference.scaling
 
 
