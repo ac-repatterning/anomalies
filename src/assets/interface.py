@@ -33,10 +33,9 @@ class Interface:
         self.__s3_parameters: s3p.S3Parameters = s3_parameters
         self.__arguments = arguments
 
-    def exc(self, limits: list) -> list[sc.Specification]:
+    def exc(self) -> list[sc.Specification]:
         """
 
-        :param limits:
         :return:
         """
 
@@ -60,7 +59,7 @@ class Interface:
         src.assets.artefacts.Artefacts(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
         src.assets.source.Source(
-            arguments=self.__arguments, limits=limits).exc(specifications=specifications)
+            arguments=self.__arguments).exc(specifications=specifications)
         src.assets.metrics.Metrics(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
 
