@@ -4,7 +4,7 @@ import datetime
 import pandas as pd
 
 
-class Limits:
+class Timings:
     """
     Partitions for parallel computation.
     """
