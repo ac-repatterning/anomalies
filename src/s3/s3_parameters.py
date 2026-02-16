@@ -35,7 +35,6 @@ class S3Parameters:
 
         # Hence
         self.__configurations = config.Config()
-        self.__project_key_name = self.__configurations.project_key_name
         self.__groups = groups
 
     def __get_dictionary(self) -> dict:
@@ -46,7 +45,8 @@ class S3Parameters:
         """
 
         data = src.s3.configurations.Configurations(
-            connector=self.__connector, groups=self.__groups).serial(key_name=self.__configurations.s3_parameters_key)
+            connector=self.__connector, bucket_name=self.__groups.get('configurations')).serial(
+            key_name=self.__configurations.s3_parameters_key)
 
         return data['parameters']
 
