@@ -1,5 +1,5 @@
 """
-Module secret.py
+Module groups.py
 """
 import json
 
@@ -7,7 +7,7 @@ import boto3
 import botocore.exceptions
 
 
-class Secret:
+class Groups:
     """
     <b>Description</b><br>
     ------------<br>
