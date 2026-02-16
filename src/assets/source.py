@@ -7,6 +7,7 @@ import dask
 import config
 import src.elements.specification as sc
 import src.s3.directives
+import src.timings
 
 
 class Source:
@@ -14,15 +15,14 @@ class Source:
     Source
     """
 
-    def __init__(self, arguments: dict, limits: list):
+    def __init__(self, arguments: dict):
         """
 
         :param arguments:
-        :param limits:
         """
 
         self.__arguments = arguments
-        self.__limits = limits
+        self.__timings = src.timings.Timings(arguments=self.__arguments).exc()
 
         # Endpoint
         self.__endpoint: str = self.__arguments.get('additions').get('modelling_data_source')
@@ -40,7 +40,7 @@ class Source:
         """
 
         # Focusing on the relevant data sets
-        parts = [ f"--include \'{limit}*\'" for limit in self.__limits]
+        parts = [ f"--include \'{timing}*\'" for timing in self.__timings]
         extra = '--recursive ' + "--exclude \'*\' " + ' '.join(parts)
 
         # key & target
