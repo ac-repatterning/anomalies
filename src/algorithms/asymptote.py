@@ -21,7 +21,7 @@ class Asymptote:
 
         self.__settings: dict = arguments.get('detecting').get('asymptote')
 
-
+    # pylint: disable=R0801
     @staticmethod
     def __get_boundaries(_data: pd.Series) -> np.ndarray:
         """
