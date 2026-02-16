@@ -15,17 +15,15 @@ class Arguments:
     Arguments
     """
 
-    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, groups: dict):
+    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters):
         """
 
         :param connector:
         :param s3_parameters:
-        :param groups:
         """
 
         self.__connector = connector
         self.__s3_parameters = s3_parameters
-        self.__groups = groups
 
         self.__configurations = config.Config()
 
@@ -72,7 +70,7 @@ class Arguments:
 
         key_name = self.__configurations.arguments_key
         arguments = src.s3.configurations.Configurations(
-            connector=self.__connector, groups=self.__groups).objects(key_name=key_name)
+            connector=self.__connector, bucket_name=self.__s3_parameters.configurations).objects(key_name=key_name)
 
         arguments['series'] = {'excerpt': args.codes} if args.codes is not None else {'excerpt': None}
         arguments['stage'] = args.stage
