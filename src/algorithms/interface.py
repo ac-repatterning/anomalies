@@ -49,11 +49,11 @@ class Interface:
         for specification in specifications:
             attribute: atr.Attribute = __get_attributes(specification=specification)
             data: pd.DataFrame = __get_data(specification=specification, attribute=attribute)
-            estimates: pd.DataFrame = __get_special_anomalies(attribute=attribute, data=data, specification=specification)
-            estimates: pd.DataFrame = __gap(estimates=estimates)
-            estimates: pd.DataFrame = __asymptote(estimates=estimates)
+            __estimates: pd.DataFrame = __get_special_anomalies(attribute=attribute, data=data, specification=specification)
+            __appending_gap: pd.DataFrame = __gap(data=__estimates)
+            __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
 
-            message = __persist(specification=specification, estimates=estimates)
+            message = __persist(specification=specification, estimates=__appending_asymptote)
             computations.append(message)
 
         messages = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
