@@ -55,6 +55,7 @@ class Gap:
 
     def exc(self, data: pd.DataFrame) -> pd.DataFrame:
         """
+        __frame['element'].where(__frame['element'] >= (self.__settings.get('length') - 1), 0)
         
         :param data:
         :return:
@@ -62,11 +63,12 @@ class Gap:
 
         frame = data.copy()
 
-        instances = pd.DataFrame(data={'original': frame['original'].values})
-        instances['boundary'] = self.__get_boundaries(_data=instances['original'])
-        instances['element'] = instances['boundary'].bfill()
-        instances['gap'] = instances['element'].where(instances['element'] >= (self.__settings.get('length') - 1), 0)
+        __frame = pd.DataFrame(data={'original': frame['original'].values})
+        __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
+        __frame['element'] = __frame['boundary'].bfill()
+        __frame['gap'] = np.where(__frame['element'] >= (self.__settings.get('length') - 1),
+                                  __frame['element'] + 1, 0)
 
-        frame = frame.assign(gap=instances['gap'].values)
+        frame = frame.assign(gap=__frame['gap'].values)
 
         return frame
