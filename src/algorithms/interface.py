@@ -6,6 +6,7 @@ import dask
 import pandas as pd
 
 import src.algorithms.attributes
+import src.algorithms.asymptote
 import src.algorithms.data
 import src.algorithms.gap
 import src.algorithms.persist
@@ -41,6 +42,7 @@ class Interface:
         __get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __get_special_anomalies = dask.delayed(src.inference.interface.Interface(arguments=self.__arguments).exc)
         __gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
+        __asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
         __persist = dask.delayed(src.algorithms.persist.Persist().exc)
 
         computations = []
@@ -49,9 +51,10 @@ class Interface:
             data: pd.DataFrame = __get_data(specification=specification, attribute=attribute)
             estimates: pd.DataFrame = __get_special_anomalies(attribute=attribute, data=data, specification=specification)
             estimates: pd.DataFrame = __gap(estimates=estimates)
+            estimates: pd.DataFrame = __asymptote(estimates=estimates)
 
             message = __persist(specification=specification, estimates=estimates)
             computations.append(message)
 
-        messages = dask.compute(computations, scheduler='processes', num_workers=int(0.5*self.__n_cores))[0]
+        messages = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
         logging.info(messages)
