@@ -1,4 +1,4 @@
-"""Module configurations.py"""
+"""Module serials.py"""
 
 import json
 
@@ -8,7 +8,7 @@ import yaml
 import src.s3.unload
 
 
-class Configurations:
+class Serials:
     """
     Notes<br>
     ------<br>
