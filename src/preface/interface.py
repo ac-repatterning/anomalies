@@ -7,11 +7,10 @@ import boto3
 import config
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
-import src.functions.service
 import src.functions.groups
+import src.functions.service
 import src.preface.arguments
 import src.preface.setup
-import src.s3.configurations
 import src.s3.s3_parameters
 
 
