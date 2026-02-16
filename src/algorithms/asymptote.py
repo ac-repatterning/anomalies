@@ -38,25 +38,27 @@ class Asymptote:
         exists = ~conditionals
         c_exists = np.cumsum(exists)
         boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
+        print('asymptote boundaries\n%s', boundaries)
 
         zeros = np.nan * np.zeros_like(constants)
         zeros[conditionals] = boundaries
 
         return np.concat([zeros[1:], [0]])
 
-    def exc(self, estimates: pd.DataFrame) -> pd.DataFrame:
+    def exc(self, data: pd.DataFrame) -> pd.DataFrame:
         """
 
-        :param estimates:
+        :param data:
         :return:
         """
 
-        frame = estimates.copy()
+        frame = data.copy()
 
         __frame = pd.DataFrame(data={'original': frame['original'].values})
         __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
         __frame['element'] = __frame['boundary'].bfill()
         __frame['asymptote'] = __frame['element'].where(__frame['element'] >= (self.__settings.get('length') - 1), 0)
+        print(__frame)
 
         frame = frame.assign(asymptote=__frame['asymptote'].values)
 
