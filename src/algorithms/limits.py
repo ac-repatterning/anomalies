@@ -1,11 +1,17 @@
-import logging
+"""Module limits.py"""
 import boto3
+
+import numpy as np
+import pandas as pd
 
 import src.s3.serials
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 
 class Limits:
+    """
+
+    """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, arguments: dict):
         """
@@ -21,7 +27,19 @@ class Limits:
         self.__edges = src.s3.serials.Serials(
             connector=connector, bucket_name=bucket_name).objects(key_name=key_name)
 
-    def exc(self, specification: sc.Specification):
+    def exc(self, data: pd.DataFrame, specification: sc.Specification):
+        """
 
-        definitions: dict = self.__edges.get(specification.ts_id)
-        logging.info(definitions)
+        :param data:
+        :param specification:
+        :return:
+        """
+
+        definitions: dict = self.__edges.get(str(specification.ts_id))
+
+        frame = data.copy()
+        points: np.ndarray = frame['original'].values
+        booleans: np.ndarray = (points < definitions.get('e_l_whisker')) | (points > definitions.get('e_u_whisker'))
+        frame = frame.assign(extreme=booleans.astype(int))
+
+        return frame
