@@ -31,18 +31,20 @@ class Asymptote:
         :return:
         """
 
+        # Expectation: The difference between consecutive, and real, equal values will be zero
         difference = _data.copy().diff()
 
+        # Boundary determination
         constants=np.where(difference == 0, 1, np.nan)
         conditionals = np.isnan(constants)
         exists = ~conditionals
         c_exists = np.cumsum(exists)
-        boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
+        __boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
 
-        zeros = np.nan * np.zeros_like(constants)
-        zeros[conditionals] = boundaries
+        boundaries = np.nan * np.zeros_like(constants)
+        boundaries[conditionals] = __boundaries
 
-        return np.concat([zeros[1:], [0]])
+        return np.concat([boundaries[1:], [0]])
 
     def exc(self, data: pd.DataFrame) -> pd.DataFrame:
         """
