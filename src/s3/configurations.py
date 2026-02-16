@@ -1,11 +1,10 @@
 """Module configurations.py"""
+
 import json
 
 import boto3
 import yaml
 
-import config
-import src.functions.secret
 import src.s3.unload
 
 
@@ -17,10 +16,11 @@ class Configurations:
     This class reads-in Amazon S3 (Simple Storage Service) based configuration files.
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, connector: boto3.session.Session, groups: dict):
         """
 
         :param connector: An instance of boto3.session.Session
+        :param groups:
         """
 
         # An instance for S3 interactions
@@ -28,7 +28,7 @@ class Configurations:
             service_name='s3')
 
         # An instance for Secrets Manager interactions.
-        self.__secret = src.functions.secret.Secret(connector=connector)
+        self.__groups = groups
 
     def __buffer(self, key_name: str):
         """
@@ -38,8 +38,7 @@ class Configurations:
         """
 
         buffer = src.s3.unload.Unload(s3_client=self.__s3_client).exc(
-            bucket_name=self.__secret.exc(secret_id=config.Config().project_key_name, node='configurations'),
-            key_name=key_name)
+            bucket_name=self.__groups.get('configurations'), key_name=key_name)
 
         return buffer
 
