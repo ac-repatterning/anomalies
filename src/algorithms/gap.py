@@ -44,25 +44,27 @@ class Gap:
         exists = ~conditionals
         c_exists = np.cumsum(exists)
         boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
+        print('gap boundaries\n%s', boundaries)
 
         zeros = np.nan * np.zeros_like(constants)
         zeros[conditionals] = boundaries
 
         return np.concat([zeros[1:], [0]])
 
-    def exc(self, estimates: pd.DataFrame) -> pd.DataFrame:
+    def exc(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         
-        :param estimates:
+        :param data:
         :return:
         """
 
-        frame = estimates.copy()
+        frame = data.copy()
 
         instances = pd.DataFrame(data={'original': frame['original'].values})
         instances['boundary'] = self.__get_boundaries(_data=instances['original'])
         instances['element'] = instances['boundary'].bfill()
         instances['gap'] = instances['element'].where(instances['element'] >= (self.__settings.get('length') - 1), 0)
+        print(instances)
 
         frame = frame.assign(gap=instances['gap'].values)
 
