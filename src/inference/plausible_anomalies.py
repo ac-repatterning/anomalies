@@ -22,14 +22,17 @@ class PlausibleAnomalies:
         self.__objects = src.functions.objects.Objects()
         self.__configurations = config.Config()
 
-    def __plausible_anomalies(self, points: np.ndarray, specification: sc.Specification) -> np.ndarray:
+    def __plausible_anomalies(self, estimates: pd.DataFrame, specification: sc.Specification) -> np.ndarray:
         """
         {k: v for k, v in zip(data['columns'], data['data'][0])}
 
-        :param points:
+        :param estimates:
         :param specification:
         :return:
         """
+
+        points: np.ndarray = estimates['p_error'].values
+        real: np.ndarray = estimates['original'].notna().values
 
         # Error quantiles
         uri = os.path.join(self.__configurations.data_, 'metrics', str(specification.ts_id) + '.json')
@@ -41,7 +44,8 @@ class PlausibleAnomalies:
         u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
 
         # An anomaly vis-à-vis quantiles metrics?
-        p_anomalies: np.ndarray = np.where((points < l_boundary) | (points > u_boundary), 1, 0)
+        p_outliers = np.where((points < l_boundary) | (points > u_boundary), 1, 0)
+        p_anomalies = np.where(p_outliers & real, 1, 0)
 
         return p_anomalies
 
@@ -53,8 +57,8 @@ class PlausibleAnomalies:
         :return:
         """
 
-        points: np.ndarray = estimates['p_error'].values
-        p_anomalies = self.__plausible_anomalies(points=points, specification=specification)
+
+        p_anomalies = self.__plausible_anomalies(estimates=estimates.copy(), specification=specification)
         estimates = estimates.assign(p_anomaly=p_anomalies)
 
         return estimates
