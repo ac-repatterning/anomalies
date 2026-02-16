@@ -28,7 +28,9 @@ def main():
     logger.info(specifications)
 
     # ...
-    src.algorithms.interface.Interface(arguments=arguments).exc(specifications=specifications)
+    src.algorithms.interface.Interface(
+        connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc(
+        specifications=specifications)
 
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
