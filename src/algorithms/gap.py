@@ -21,6 +21,7 @@ class Gap:
 
         self.__settings: dict = arguments.get('detecting').get('gap')
 
+    # pylint: disable=R0801
     @staticmethod
     def __get_boundaries(_data: pd.Series) -> np.ndarray:
         """
