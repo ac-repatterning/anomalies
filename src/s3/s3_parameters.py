@@ -4,8 +4,7 @@ import boto3
 
 import config
 import src.elements.s3_parameters as s3p
-import src.functions.serial
-import src.s3.configurations
+import src.s3.serials
 import src.s3.unload
 
 
@@ -44,7 +43,7 @@ class S3Parameters:
             A dictionary, or excerpt dictionary, of YAML file contents
         """
 
-        data = src.s3.configurations.Configurations(
+        data = src.s3.serials.Serials(
             connector=self.__connector, bucket_name=self.__groups.get('configurations')).serial(
             key_name=self.__configurations.s3_parameters_key)
 
