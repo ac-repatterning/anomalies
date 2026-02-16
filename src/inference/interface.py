@@ -1,5 +1,4 @@
 """Module inference/interface.py"""
-import logging
 
 import pandas as pd
 
@@ -16,13 +15,11 @@ class Interface:
     Interface
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self):
         """
 
-        :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
+        Constructor
         """
-
-        self.__arguments = arguments
 
         # Setting up
         self.__scaling = src.inference.scaling.Scaling()
