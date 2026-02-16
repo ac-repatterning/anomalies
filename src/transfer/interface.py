@@ -18,7 +18,7 @@ class Interface:
     Class Interface
     """
 
-    def __init__(self, connector: boto3.session.Session, service: sr.Service, s3_parameters: s3p, arguments: dict):
+    def __init__(self, connector: boto3.session.Session, service: sr.Service, s3_parameters: s3p, arguments: dict, groups: dict):
         """
 
         :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
@@ -27,6 +27,7 @@ class Interface:
         :param s3_parameters: The overarching S3 parameters settings of this
                               project, e.g., region code name, buckets, etc.<br>
         :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
+        :param groups: <br>
         """
 
         self.__service: sr.Service = service
@@ -37,7 +38,7 @@ class Interface:
         self.__configurations = config.Config()
 
         # Metadata dictionary
-        self.__metadata = src.transfer.metadata.Metadata(connector=connector)
+        self.__metadata = src.transfer.metadata.Metadata(connector=connector, groups=groups)
 
     def __get_metadata(self, frame: pd.DataFrame) -> pd.DataFrame:
         """
