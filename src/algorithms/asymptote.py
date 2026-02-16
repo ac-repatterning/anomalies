@@ -13,8 +13,14 @@ class Asymptote:
     Context: Cases whereby there are N or more consecutive non-changing values.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, arguments: dict):
+        """
+
+        :param arguments:
+        """
+
+        self.__settings: dict = arguments.get('detecting').get('asymptote')
+
 
     @staticmethod
     def __get_boundaries(_data: pd.Series):
@@ -38,16 +44,20 @@ class Asymptote:
 
         return np.concat([zeros[1:], [0]])
 
-    def exc(self, blob: pd.Series) -> np.ndarray:
+    def exc(self, estimates: pd.DataFrame) -> pd.DataFrame:
         """
 
-        :param blob:
+        :param estimates:
         :return:
         """
 
-        __frame = pd.DataFrame(data={'original': blob.values})
+        frame = estimates.copy()
+
+        __frame = pd.DataFrame(data={'original': frame['original'].values})
         __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
         __frame['element'] = __frame['boundary'].bfill()
-        __frame['asymptote'] = __frame['element'].where(__frame['element'] >= 3, 0)
+        __frame['asymptote'] = __frame['element'].where(__frame['element'] >= (self.__settings.get('length') - 1), 0)
 
-        return __frame['asymptote'].values
+        frame = frame.assign(asymptote=__frame['asymptote'].values)
+
+        return frame
