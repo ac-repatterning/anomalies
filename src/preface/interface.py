@@ -44,7 +44,7 @@ class Interface:
         service: sr.Service = src.functions.service.Service(
             connector=connector, region_name=s3_parameters.region_name).exc()
         arguments = src.preface.arguments.Arguments(
-            connector=connector, s3_parameters=s3_parameters, groups=groups).exc(args=args)
+            connector=connector, s3_parameters=s3_parameters).exc(args=args)
 
         # Setting up
         src.preface.setup.Setup(service=service, s3_parameters=s3_parameters).exc()
