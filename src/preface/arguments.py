@@ -6,7 +6,7 @@ import boto3
 
 import config
 import src.elements.s3_parameters as s3p
-import src.s3.configurations
+import src.s3.serials
 
 
 class Arguments:
@@ -69,7 +69,7 @@ class Arguments:
         """
 
         key_name = self.__configurations.arguments_key
-        arguments = src.s3.configurations.Configurations(
+        arguments = src.s3.serials.Serials(
             connector=self.__connector, bucket_name=self.__s3_parameters.configurations).objects(key_name=key_name)
 
         arguments['series'] = {'excerpt': args.codes} if args.codes is not None else {'excerpt': None}
