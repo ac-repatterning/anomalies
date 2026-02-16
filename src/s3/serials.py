@@ -56,7 +56,7 @@ class Serials:
 
         return data
 
-    def objects(self, key_name: str):
+    def objects(self, key_name: str) -> dict | list[dict]:
         """
 
         :param key_name: <prefix> + <file name, including extension>
