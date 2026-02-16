@@ -39,8 +39,8 @@ class Interface:
         self.__get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
         self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface().exc)
-
-        src.algorithms.limits.Limits(connector=connector, s3_parameters=s3_parameters, arguments=arguments)
+        self.__limits = dask.delayed(src.algorithms.limits.Limits(
+            connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
 
     def exc(self, specifications: list[sc.Specification]):
         """
@@ -61,8 +61,9 @@ class Interface:
                 attribute=attribute, data=data, specification=specification)
             __appending_gap: pd.DataFrame = __gap(data=__estimates)
             __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
+            __appending_limits = self.__limits(data=__appending_asymptote, specification=specification)
 
-            message = __persist(specification=specification, estimates=__appending_asymptote)
+            message = __persist(specification=specification, estimates=__appending_limits)
             computations.append(message)
 
         messages = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
