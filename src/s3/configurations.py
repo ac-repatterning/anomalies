@@ -16,19 +16,18 @@ class Configurations:
     This class reads-in Amazon S3 (Simple Storage Service) based configuration files.
     """
 
-    def __init__(self, connector: boto3.session.Session, groups: dict):
+    def __init__(self, connector: boto3.session.Session, bucket_name: str):
         """
 
         :param connector: An instance of boto3.session.Session
-        :param groups:
+        :param bucket_name:
         """
 
         # An instance for S3 interactions
-        self.__s3_client: boto3.session.Session.client = connector.client(
-            service_name='s3')
+        self.__s3_client: boto3.session.Session.client = connector.client(service_name='s3')
 
         # An instance for Secrets Manager interactions.
-        self.__groups = groups
+        self.__bucket_name = bucket_name
 
     def __buffer(self, key_name: str):
         """
@@ -38,7 +37,7 @@ class Configurations:
         """
 
         buffer = src.s3.unload.Unload(s3_client=self.__s3_client).exc(
-            bucket_name=self.__groups.get('configurations'), key_name=key_name)
+            bucket_name=self.__bucket_name, key_name=key_name)
 
         return buffer
 
