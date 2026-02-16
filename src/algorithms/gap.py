@@ -45,10 +45,10 @@ class Gap:
         conditionals = np.isnan(constants)
         exists = ~conditionals
         c_exists = np.cumsum(exists)
-        accumulations = np.diff(np.concatenate(([0], c_exists[conditionals])))
+        __boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
 
         boundaries = np.nan * np.zeros_like(constants)
-        boundaries[conditionals] = accumulations
+        boundaries[conditionals] = __boundaries
 
         return np.concat([boundaries[1:], [0]])
 
