@@ -8,6 +8,8 @@ import config
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
 import src.functions.service
+import src.functions.groups
+import src.preface.arguments
 import src.preface.setup
 import src.s3.configurations
 import src.s3.s3_parameters
@@ -25,62 +27,6 @@ class Interface:
 
         self.__configurations = config.Config()
 
-    @staticmethod
-    def __set_source(arguments: dict, s3_parameters: s3p.S3Parameters) -> dict:
-        """
-
-        :param arguments:
-        :param s3_parameters:
-        :return:
-        """
-
-        objects = s3_parameters._asdict()
-        bucket = objects[arguments.get('s3').get('p_bucket')]
-        prefix = objects[arguments.get('s3').get('p_prefix')]
-
-        source = f's3://{bucket}/{prefix}{arguments.get('s3').get('affix')}'
-
-        arguments['additions'] = {'modelling_data_source': source}
-
-        return arguments
-
-    def __get_arguments(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters,
-                        args: argparse.Namespace) -> dict:
-        """
-
-        :param connector:
-        :param s3_parameters:
-        :param args:
-        :return:
-        """
-
-        key_name = self.__configurations.arguments_key
-        arguments = src.s3.configurations.Configurations(connector=connector).objects(key_name=key_name)
-        arguments: dict = self.__set_source(arguments=arguments.copy(), s3_parameters=s3_parameters)
-
-        arguments['series'] = {'excerpt': args.codes} if args.codes is not None else {'excerpt': None}
-        arguments['stage'] = args.stage
-
-        return arguments
-
-    @staticmethod
-    def __prefix(arguments: dict) -> dict:
-        """
-
-        :param arguments:
-        :return:
-        """
-
-        match arguments.get('stage'):
-            case 'initial':
-                arguments['prefix'] = arguments.get('inference').get('initial')
-            case 'live':
-                arguments['prefix'] = arguments.get('inference').get('live')
-            case _:
-                raise ValueError(f'Unknown stage: {arguments.get('stage')}')
-
-        return arguments
-
     def exc(self, args: argparse.Namespace) -> typing.Tuple[boto3.session.Session, s3p.S3Parameters, sr.Service, dict]:
         """
 
@@ -89,15 +35,16 @@ class Interface:
         """
 
         connector = boto3.session.Session()
+        groups = src.functions.groups.Groups(
+            connector=connector).exc(project_key_name=self.__configurations.project_key_name)
 
         # Interaction Instances: Amazon
-        s3_parameters: s3p.S3Parameters = src.s3.s3_parameters.S3Parameters(connector=connector,).exc()
+        s3_parameters: s3p.S3Parameters = src.s3.s3_parameters.S3Parameters(
+            connector=connector, groups=groups).exc()
         service: sr.Service = src.functions.service.Service(
             connector=connector, region_name=s3_parameters.region_name).exc()
-
-        # Arguments
-        arguments: dict = self.__get_arguments(connector=connector, s3_parameters=s3_parameters, args=args)
-        arguments: dict = self.__prefix(arguments=arguments)
+        arguments = src.preface.arguments.Arguments(
+            connector=connector, s3_parameters=s3_parameters, groups=groups).exc(args=args)
 
         # Setting up
         src.preface.setup.Setup(service=service, s3_parameters=s3_parameters).exc()
