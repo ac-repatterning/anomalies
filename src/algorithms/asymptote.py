@@ -23,7 +23,7 @@ class Asymptote:
 
 
     @staticmethod
-    def __get_boundaries(_data: pd.Series):
+    def __get_boundaries(_data: pd.Series) -> np.ndarray:
         """
         This function determines the areas along a series whereby there are N or more consecutive non-changing values.
 
@@ -38,7 +38,6 @@ class Asymptote:
         exists = ~conditionals
         c_exists = np.cumsum(exists)
         boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
-        print('asymptote boundaries\n%s', boundaries)
 
         zeros = np.nan * np.zeros_like(constants)
         zeros[conditionals] = boundaries
@@ -58,7 +57,6 @@ class Asymptote:
         __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
         __frame['element'] = __frame['boundary'].bfill()
         __frame['asymptote'] = __frame['element'].where(__frame['element'] >= (self.__settings.get('length') - 1), 0)
-        print(__frame)
 
         frame = frame.assign(asymptote=__frame['asymptote'].values)
 
