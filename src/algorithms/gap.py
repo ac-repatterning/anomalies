@@ -22,7 +22,7 @@ class Gap:
         self.__settings: dict = arguments.get('detecting').get('gap')
 
     @staticmethod
-    def __get_boundaries(_data: pd.Series):
+    def __get_boundaries(_data: pd.Series) -> np.ndarray:
         """
 
         :param _data:
@@ -35,21 +35,22 @@ class Gap:
         # Subsequently, the values that were not NaN values are set to NaN
         __set_irrelevant = __values.where(__values == 1, np.nan)
 
-        # ...
+        # The difference between real values; always zero because all the real values are 1
         difference = __set_irrelevant.diff()
 
-        # ...
+        # In aid of boundary determination
         constants=np.where(difference == 0, 1, np.nan)
+
+        # Therefore
         conditionals = np.isnan(constants)
         exists = ~conditionals
         c_exists = np.cumsum(exists)
-        boundaries = np.diff(np.concatenate(([0], c_exists[conditionals])))
-        print('gap boundaries\n%s', boundaries)
+        accumulations = np.diff(np.concatenate(([0], c_exists[conditionals])))
 
-        zeros = np.nan * np.zeros_like(constants)
-        zeros[conditionals] = boundaries
+        boundaries = np.nan * np.zeros_like(constants)
+        boundaries[conditionals] = accumulations
 
-        return np.concat([zeros[1:], [0]])
+        return np.concat([boundaries[1:], [0]])
 
     def exc(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -64,7 +65,6 @@ class Gap:
         instances['boundary'] = self.__get_boundaries(_data=instances['original'])
         instances['element'] = instances['boundary'].bfill()
         instances['gap'] = instances['element'].where(instances['element'] >= (self.__settings.get('length') - 1), 0)
-        print(instances)
 
         frame = frame.assign(gap=instances['gap'].values)
 
