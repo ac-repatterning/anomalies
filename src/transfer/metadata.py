@@ -5,7 +5,7 @@ import boto3
 import config
 import src.elements.s3_parameters as s3p
 import src.functions.objects
-import src.s3.configurations
+import src.s3.serials
 
 
 class Metadata:
@@ -37,7 +37,7 @@ class Metadata:
         :return:
         """
 
-        dictionary = src.s3.configurations.Configurations(
+        dictionary = src.s3.serials.Serials(
             connector=self.__connector, bucket_name=self.__s3_parameters.configurations).objects(
             key_name=self.__configurations.metadata_ + '/' + name)
 
