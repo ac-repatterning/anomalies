@@ -59,7 +59,7 @@ class Setup:
 
         self.__directories.cleanup(path=self.__configurations.data_)
 
-        return self.__directories.create(path=os.path.join(self.__configurations.data_, 'metrics'))
+        return self.__directories.create(path=self.__configurations.data_)
 
     def __local(self) -> bool:
         """
