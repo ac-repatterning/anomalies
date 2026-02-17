@@ -1,15 +1,12 @@
 """Module data.py"""
-import glob
-import os
 
 import dask.dataframe as ddf
 import numpy as np
 import pandas as pd
 
-import config
-import src.assets.timings
 import src.elements.attribute as atr
 import src.elements.specification as sc
+import src.timings
 
 
 class Data:
@@ -28,8 +25,7 @@ class Data:
         self.__n_samples = int(days * 24 / frequency)
 
         # Instances
-        self.__configurations = config.Config()
-        self.__timings: list = src.assets.timings.Timings(arguments=arguments).exc()
+        self.__timings: list = src.timings.Timings(arguments=arguments).exc()
         self.__endpoint: str = arguments.get('additions').get('modelling_data_source')
 
         # Focus
@@ -54,19 +50,6 @@ class Data:
 
         return block
 
-    def __get_listing(self, specification: sc.Specification) -> list[str]:
-        """
-
-        :param specification:
-        :return:
-        """
-
-        listing = glob.glob(
-            pathname=os.path.join(self.__configurations.data_, 'source', str(specification.catchment_id),
-                                  str(specification.ts_id), '*.csv'))
-
-        return listing
-
     @staticmethod
     def __set_missing(data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -90,9 +73,8 @@ class Data:
         :return:
         """
 
-        listing = [f'{self.__endpoint}/{specification.catchment_id}/{specification.ts_id}/{timing}.csv' for timing in self.__timings ]
-
-        # listing =  self.__get_listing(specification=specification)
+        listing = [f'{self.__endpoint}/{specification.catchment_id}/{specification.ts_id}/{timing}.csv'
+                   for timing in self.__timings ]
 
         # The data
         data = self.__get_data(listing=listing)
