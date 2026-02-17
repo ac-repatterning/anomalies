@@ -7,7 +7,7 @@ import dask
 import config
 import src.elements.specification as sc
 import src.s3.directives
-import src.assets.timings
+import src.timings
 
 
 class Source:
@@ -22,7 +22,7 @@ class Source:
         """
 
         self.__arguments = arguments
-        self.__timings = src.assets.timings.Timings(arguments=self.__arguments).exc()
+        self.__timings = src.timings.Timings(arguments=self.__arguments).exc()
 
         # Endpoint
         self.__endpoint: str = self.__arguments.get('additions').get('modelling_data_source')
