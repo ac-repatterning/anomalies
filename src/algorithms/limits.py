@@ -22,9 +22,9 @@ class Limits:
         :param arguments
         """
 
-        key_name = arguments.get('edges').get('key_name')
-        bucket_name = s3_parameters._asdict().get(arguments.get('edges').get('p_bucket'))
-        self.__edges = src.s3.serials.Serials(
+        key_name = arguments.get('g_quantiles').get('key_name')
+        bucket_name = s3_parameters._asdict().get(arguments.get('g_quantiles').get('p_bucket'))
+        self.__quantiles = src.s3.serials.Serials(
             connector=connector, bucket_name=bucket_name).objects(key_name=key_name)
 
     def exc(self, data: pd.DataFrame, specification: sc.Specification):
@@ -35,7 +35,7 @@ class Limits:
         :return:
         """
 
-        definitions: dict = self.__edges.get(str(specification.ts_id))
+        definitions: dict = self.__quantiles.get(str(specification.ts_id))
 
         frame = data.copy()
         points: np.ndarray = frame['original'].values
