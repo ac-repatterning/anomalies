@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 import config
+import src.assets.timings
 import src.elements.attribute as atr
 import src.elements.specification as sc
 
@@ -26,8 +27,10 @@ class Data:
         days = round(365 * arguments.get('spanning'))
         self.__n_samples = int(days * 24 / frequency)
 
-        # Configurations
+        # Instances
         self.__configurations = config.Config()
+        self.__timings: list = src.assets.timings.Timings(arguments=arguments).exc()
+        self.__endpoint: str = arguments.get('additions').get('modelling_data_source')
 
         # Focus
         self.__dtype = {'timestamp': np.float64, 'ts_id': np.float64, 'measure': float}
@@ -87,7 +90,9 @@ class Data:
         :return:
         """
 
-        listing =  self.__get_listing(specification=specification)
+        listing = [f'{self.__endpoint}/{specification.catchment_id}/{specification.ts_id}/{timing}.csv' for timing in self.__timings ]
+
+        # listing =  self.__get_listing(specification=specification)
 
         # The data
         data = self.__get_data(listing=listing)
