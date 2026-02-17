@@ -5,7 +5,6 @@ import pandas as pd
 import src.assets.artefacts
 import src.assets.menu
 import src.assets.metadata
-import src.assets.metrics
 import src.assets.reference
 import src.assets.specifications
 import src.elements.s3_parameters as s3p
@@ -56,8 +55,6 @@ class Interface:
 
         # Unload model artefacts
         src.assets.artefacts.Artefacts(
-            s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
-        src.assets.metrics.Metrics(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
 
         return specifications
