@@ -1,12 +1,16 @@
 """Module plausible_anomalies.py"""
+import logging
 import os
 
+import boto3
 import numpy as np
 import pandas as pd
 
 import config
+import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 import src.functions.objects
+import src.s3.serials
 
 
 class PlausibleAnomalies:
@@ -14,14 +18,26 @@ class PlausibleAnomalies:
     Differences
     """
 
-    def __init__(self):
+    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, arguments: dict):
         """
 
-        Constructor
+        :param connector: An instance of boto3.session.Session<br>
+        :param s3_parameters: The overarching S3 parameters settings of this
+                              project, e.g., region code name, buckets, etc.<br>
+        :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
         """
 
-        self.__objects = src.functions.objects.Objects()
+        self.__arguments = arguments
+
+        # Instances
         self.__configurations = config.Config()
+        self.__objects = src.functions.objects.Objects()
+
+        # Future
+        key_name = f'{self.__arguments.get('prefix').get('metrics')}/metrics/aggregates/aggregates.json'
+        self.__aggregates = src.s3.serials.Serials(
+            connector=connector, bucket_name=s3_parameters.external).objects(key_name=key_name)
+        logging.info(self.__aggregates)
 
     def __get_error_quantiles(self, ts_id: int):
         """
