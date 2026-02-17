@@ -33,6 +33,8 @@ class Artefacts:
 
     def __get_artefacts(self, specification: sc.Specification):
         """
+        parts = [ f"--include \'{timing}*\'" for timing in self.__timings]
+        extra = '--recursive ' + "--exclude \'*\' " + ' '.join(parts)
 
         :param specification: Refer to src.elements.specification.py
         :return:
@@ -45,8 +47,15 @@ class Artefacts:
 
         self.__directories.create(target)
 
-        return self.__directives.unload(
-            source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
+        # key ... , target, extra
+        key = f's3://{self.__s3_parameters.internal}/{origin}'
+        parts = [ f"--include \'{part}*\'" for part in ['modelling', 'scaling', 'model/']]
+        extra = '--recursive ' + "--exclude \'*\' " + ' '.join(parts)
+
+        # self.__directives.unload(
+        #     source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
+
+        return self.__directives.unload_(key=key, target=target, extra=extra)
 
     def exc(self, specifications: list[sc.Specification]):
         """
