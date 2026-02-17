@@ -44,7 +44,7 @@ class Directives:
 
         return state.returncode
 
-    def unload_(self, key: str, target: str, extra: str = ''):
+    def unload_(self, key: str, target: str, extra: str = '') -> int:
         """
 
         :param key:
