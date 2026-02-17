@@ -67,9 +67,9 @@ class PlausibleAnomalies:
 
         # Quantiles & Boundaries
         quantiles = self.__get_error_quantiles(ts_id=ts_id)
-        median = quantiles.get('median')
-        l_boundary = quantiles.get('l_whisker_e') - (median - quantiles.get('l_whisker_e'))
-        u_boundary = quantiles.get('u_whisker_e') + (quantiles.get('u_whisker_e') - median)
+        median = quantiles.get('median_pe')
+        l_boundary = quantiles.get('l_whisker_pe_extreme') - (median - quantiles.get('l_whisker_pe_extreme'))
+        u_boundary = quantiles.get('u_whisker_pe_extreme') + (quantiles.get('u_whisker_pe_extreme') - median)
 
         # An anomaly vis-à-vis quantiles metrics?
         p_outliers = np.where((points < l_boundary) | (points > u_boundary), 1, 0)
