@@ -62,7 +62,7 @@ class Interface:
                 attribute=attribute, data=data, specification=specification)
             __appending_gap: pd.DataFrame = __gap(data=__estimates)
             __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
-            __appending_limits = self.__limits(data=__appending_asymptote, specification=specification)
+            __appending_limits: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
 
             message = __persist(specification=specification, estimates=__appending_limits)
             computations.append(message)
