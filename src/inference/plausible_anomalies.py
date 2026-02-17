@@ -1,6 +1,4 @@
 """Module plausible_anomalies.py"""
-import logging
-import os
 
 import boto3
 import numpy as np
@@ -34,25 +32,11 @@ class PlausibleAnomalies:
         self.__objects = src.functions.objects.Objects()
 
         # Future
-        key_name = f'{self.__arguments.get('prefix').get('metrics')}/metrics/aggregates/aggregates.json'
-        self.__aggregates = src.s3.serials.Serials(
+        key_name = f'{self.__arguments.get('prefix').get('metrics')}/metrics/aggregates/by_stage.json'
+        __aggregates = src.s3.serials.Serials(
             connector=connector, bucket_name=s3_parameters.external).objects(key_name=key_name)
-        logging.info(self.__aggregates)
-
-    def __get_error_quantiles(self, ts_id: int):
-        """
-        {k: v for k, v in zip(data['columns'], data['data'][0])}
-
-        :param ts_id:
-        :return:
-        """
-
-        # Error quantiles
-        uri = os.path.join(self.__configurations.data_, 'metrics', str(ts_id) + '.json')
-        data = self.__objects.read(uri=uri)['q_testing']
-        quantiles = dict(zip(data['columns'], data['data'][0]))
-
-        return quantiles
+        frame = pd.json_normalize(data=__aggregates.get('testing'), record_path='data')
+        self.__aggregates = frame.set_axis(labels=__aggregates.get('testing').get('columns'), axis=1)
 
     def __plausible_anomalies(self, estimates: pd.DataFrame, ts_id: int) -> np.ndarray:
         """
@@ -66,7 +50,7 @@ class PlausibleAnomalies:
         real: np.ndarray = estimates['original'].notna().values
 
         # Quantiles & Boundaries
-        quantiles = self.__get_error_quantiles(ts_id=ts_id)
+        quantiles = self.__aggregates.loc[self.__aggregates['ts_id'] == ts_id, :][:1].squeeze()
         median = quantiles.get('median_pe')
         l_boundary = quantiles.get('l_whisker_pe_extreme') - (median - quantiles.get('l_whisker_pe_extreme'))
         u_boundary = quantiles.get('u_whisker_pe_extreme') + (quantiles.get('u_whisker_pe_extreme') - median)
