@@ -1,20 +1,20 @@
 """Module inference/interface.py"""
 import logging
 import multiprocessing
-import boto3
 
+import boto3
 import dask
 import pandas as pd
 
-import src.algorithms.attributes
 import src.algorithms.asymptote
+import src.algorithms.attributes
 import src.algorithms.data
 import src.algorithms.gap
 import src.algorithms.limits
 import src.algorithms.persist
 import src.elements.attribute as atr
-import src.elements.specification as sc
 import src.elements.s3_parameters as s3p
+import src.elements.specification as sc
 import src.inference.interface
 
 
@@ -38,7 +38,8 @@ class Interface:
         self.__n_cores = multiprocessing.cpu_count()
         self.__get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
         self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
-        self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface().exc)
+        self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface(
+            connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
         self.__limits = dask.delayed(src.algorithms.limits.Limits(
             connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
 
