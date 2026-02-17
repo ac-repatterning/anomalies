@@ -58,8 +58,8 @@ class Interface:
         # Unload model artefacts
         src.assets.artefacts.Artefacts(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
-        src.assets.source.Source(
-            arguments=self.__arguments).exc(specifications=specifications)
+        # src.assets.source.Source(
+        #     arguments=self.__arguments).exc(specifications=specifications)
         src.assets.metrics.Metrics(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
 
