@@ -11,6 +11,8 @@ import src.elements.specification as sc
 class Limits:
     """
 
+    An extreme values option based on the [0.05, 0.95] distribution of gauge values across
+    time, vis-à-vis available/accessible data.
     """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, arguments: dict):
