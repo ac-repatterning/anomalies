@@ -30,15 +30,14 @@ class Metadata:
 
         self.__configurations = config.Config()
 
-    def exc(self, name: str) -> dict:
+    def exc(self) -> dict:
         """
 
-        :param name:
         :return:
         """
 
         dictionary = src.s3.serials.Serials(
             connector=self.__connector, bucket_name=self.__s3_parameters.configurations).objects(
-            key_name=self.__configurations.metadata_ + '/' + name)
+            key_name=self.__configurations.metadata_key)
 
         return dictionary
