@@ -1,19 +1,18 @@
 """Module inference/interface.py"""
-import logging
-import os
+
 import multiprocessing
 
 import boto3
 import dask
 import pandas as pd
 
-import config
 import src.algorithms.asymptote
 import src.algorithms.attributes
 import src.algorithms.data
 import src.algorithms.gap
 import src.algorithms.limits
 import src.algorithms.occurrences
+import src.algorithms.perspective
 import src.elements.attribute as atr
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
@@ -66,13 +65,10 @@ class Interface:
             __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
             estimates: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
 
-            vector = __occurrences(frame=estimates, specification=specification)
+            vector: dict = __occurrences(frame=estimates, specification=specification)
             computations.append(vector)
 
-        vectors = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
-        records = pd.DataFrame.from_records(vectors)
-        records.drop(columns=['ts_name', 'starting'], inplace=True)
-        logging.info(records)
+        vectors: list[dict] = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
 
-        records.to_json(
-            path_or_buf=os.path.join(config.Config().perspective_, 'perspective.json'), orient='index')
+        # An overarching perspective
+        src.algorithms.perspective.Perspective().exc(vectors=vectors)
