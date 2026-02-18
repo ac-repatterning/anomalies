@@ -13,7 +13,7 @@ import src.algorithms.attributes
 import src.algorithms.data
 import src.algorithms.gap
 import src.algorithms.limits
-import src.algorithms.perspective
+import src.algorithms.occurrences
 import src.elements.attribute as atr
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
@@ -54,7 +54,7 @@ class Interface:
 
         __gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
         __asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
-        __perspective = dask.delayed(src.algorithms.perspective.Perspective().exc)
+        __occurrences = dask.delayed(src.algorithms.occurrences.Occurrences().exc)
 
         computations = []
         for specification in specifications:
@@ -66,7 +66,7 @@ class Interface:
             __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
             estimates: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
 
-            vector = __perspective(frame=estimates, specification=specification)
+            vector = __occurrences(frame=estimates, specification=specification)
             computations.append(vector)
 
         vectors = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
