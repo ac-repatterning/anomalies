@@ -4,10 +4,8 @@ import boto3
 import numpy as np
 import pandas as pd
 
-import config
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
-import src.functions.objects
 import src.s3.serials
 
 
@@ -26,10 +24,6 @@ class PlausibleAnomalies:
         """
 
         self.__arguments = arguments
-
-        # Instances
-        self.__configurations = config.Config()
-        self.__objects = src.functions.objects.Objects()
 
         # Future
         key_name = f'{self.__arguments.get('prefix').get('metrics')}/metrics/aggregates/by_stage.json'
