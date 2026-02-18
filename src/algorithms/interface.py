@@ -15,6 +15,7 @@ import src.elements.attribute as atr
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 import src.inference.interface
+import src.assets.menu
 
 
 class Interface:
@@ -41,10 +42,11 @@ class Interface:
         self.__limits = dask.delayed(src.algorithms.limits.Limits(
             connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
 
-    def exc(self, specifications: list[sc.Specification]):
+    def exc(self, specifications: list[sc.Specification], reference: pd.DataFrame):
         """
 
         :param specifications:
+        :param reference:
         :return:
         """
 
@@ -66,6 +68,11 @@ class Interface:
             computations.append(vector)
 
         vectors: list[dict] = dask.compute(computations, scheduler='processes')[0]
+        records = pd.DataFrame.from_records(vectors)
+
+        # Menu
+        src.assets.menu.Menu().exc(
+            reference=reference.loc[reference['ts_id'].isin(records['ts_id'].unique()), :])
 
         # An overarching perspective
-        src.algorithms.perspective.Perspective().exc(vectors=vectors)
+        src.algorithms.perspective.Perspective().exc(records=records.copy())
