@@ -1,12 +1,15 @@
 """Module limits.py"""
-import boto3
+import logging
 
+import boto3
 import numpy as np
 import pandas as pd
 
-import src.s3.serials
+import src.algorithms.persist
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
+import src.s3.serials
+
 
 class Limits:
     """
@@ -29,6 +32,9 @@ class Limits:
         self.__quantiles = src.s3.serials.Serials(
             connector=connector, bucket_name=bucket_name).objects(key_name=key_name)
 
+        # Persist
+        self.__persist = src.algorithms.persist.Persist()
+
     def exc(self, data: pd.DataFrame, specification: sc.Specification):
         """
 
@@ -43,5 +49,8 @@ class Limits:
         points: np.ndarray = frame['original'].values
         booleans: np.ndarray = (points < definitions.get('e_l_whisker')) | (points > definitions.get('e_u_whisker'))
         frame = frame.assign(extreme=booleans.astype(int))
+
+        message = self.__persist.exc(specification=specification, estimates=frame)
+        logging.info(message)
 
         return frame
