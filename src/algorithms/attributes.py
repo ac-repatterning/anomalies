@@ -1,11 +1,10 @@
 """Module inference/attributes.py"""
+import json
 import os
 
 import config
 import src.elements.attribute as atr
 import src.elements.specification as sc
-import src.functions.objects
-import src.s3.unload
 
 
 class Attributes:
@@ -19,19 +18,22 @@ class Attributes:
         Constructor
         """
 
-
         # Instances
         self.__configurations = config.Config()
-        self.__objects = src.functions.objects.Objects()
 
-    def __get_request(self, uri: str) -> dict | list[dict]:
+    @staticmethod
+    def __get_request(uri: str) -> dict | list[dict]:
         """
 
         :param uri: A file's uniform resource identifier.
         :return:
         """
 
-        return self.__objects.read(uri=uri)
+        try:
+            with open(file=uri, mode='r', encoding='utf-8') as disk:
+                return json.load(fp=disk)
+        except ImportError:
+            return {}
 
     def exc(self, specification: sc.Specification) -> atr.Attribute:
         """
