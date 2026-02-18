@@ -42,3 +42,4 @@ class Config:
         self.pathway_ = self.warehouse
         self.points_ = os.path.join(self.pathway_, 'points')
         self.menu_ = os.path.join(self.pathway_, 'menu')
+        self.perspective_ = os.path.join(self.pathway_, 'perspective')
