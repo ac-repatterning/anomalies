@@ -27,6 +27,9 @@ class Occurrences:
         :return:
         """
 
+        if frame.empty:
+            return {}
+
         data: pd.DataFrame = frame.copy()[self.__names]
         matrix: pd.DataFrame = data.gt(0)
         vector = dict(matrix.sum(axis=0))
