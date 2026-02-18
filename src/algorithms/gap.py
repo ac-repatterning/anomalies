@@ -69,6 +69,6 @@ class Gap:
         __frame['gap'] = np.where(__frame['element'] >= (self.__settings.get('length') - 1),
                                   __frame['element'] + 1, 0)
 
-        frame = frame.assign(gap=__frame['gap'].values)
+        frame = frame.assign(gap=__frame['gap'].values, missing=__frame['original'].isna())
 
         return frame
