@@ -1,6 +1,5 @@
 """Module specific.py"""
 import argparse
-import logging
 import sys
 
 import src.functions.cache
@@ -39,26 +38,17 @@ class Specific:
 
         return _codes
 
-    def request(self, value: str='0') -> int:
+    def stage(self, value: str='live') -> str:
         """
 
         :param value:
         :return:
         """
 
-        try:
-            _value = int(value)
-        except argparse.ArgumentTypeError as err:
-            logging.info(('The optional parameter --request expects an integer; '
-                          '0 indicates pre-live models, 1 indicates latest live models, '
-                          '2 indicates on-demand inference service, 3 indicates warning period inference.'))
-            self.__cache.exc()
-            raise err from err
-
-        if _value in {0, 1, 2, 3}:
-            return _value
+        if value in {'initial', 'live'}:
+            return value
 
         self.__cache.exc()
-        sys.exit(('The optional parameter --request expects an integer; '
-                  '0 indicates pre-live models, 1 indicates latest live models, '
-                  '2 indicates on-demand inference service, 3 indicates warning period inference.'))
+        sys.exit(('The optional parameter --stage expects strings: '
+                  '  * initial: i.e., anomaly detection via pre-live models, or\n'
+                  '  * live: i.e., anomaly detection via live models'))

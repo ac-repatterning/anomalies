@@ -21,14 +21,9 @@ class Config:
         excluded for names such as warehouse, storage, depository, *key, etc.<br><br>
         """
 
-        '''
-        Keys:
-          The metadata prefix/path is in relation to a cloud configurations bucket.
-        '''
-        self.architecture = 'arc-rnn-lstm'
         self.s3_parameters_key = 's3_parameters.yaml'
-        self.arguments_key = f'architectures/{self.architecture}/arguments.json'
-        self.metadata_ = f'architectures/{self.architecture}/inference/external'
+        self.arguments_key = 'data/anomalies/arguments.json'
+        self.metadata_key = 'data/anomalies/metadata.json'
 
 
         '''
@@ -47,3 +42,4 @@ class Config:
         self.pathway_ = self.warehouse
         self.points_ = os.path.join(self.pathway_, 'points')
         self.menu_ = os.path.join(self.pathway_, 'menu')
+        self.perspective_ = os.path.join(self.pathway_, 'perspective')

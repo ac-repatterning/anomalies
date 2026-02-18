@@ -1,18 +1,14 @@
 """Module inference/interface.py"""
-import logging
-import multiprocessing
 
-import dask
+import boto3
 import pandas as pd
 
-import src.elements.approximations as apr
 import src.elements.attribute as atr
 import src.elements.master as mr
+import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 import src.inference.approximating
-import src.inference.attributes
-import src.inference.data
-import src.inference.persist
+import src.inference.plausible_anomalies
 import src.inference.scaling
 
 
@@ -21,52 +17,35 @@ class Interface:
     Interface
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, arguments: dict):
         """
 
+        :param connector: An instance of boto3.session.Session<br>
+        :param s3_parameters: The overarching S3 parameters settings of this
+                              project, e.g., region code name, buckets, etc.<br>
         :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
         """
 
-        self.__arguments = arguments
-
         # Setting up
         self.__scaling = src.inference.scaling.Scaling()
-        self.__n_cores = multiprocessing.cpu_count()
+        self.__approximating = src.inference.approximating.Approximating()
+        self.__plausible_anomalies = src.inference.plausible_anomalies.PlausibleAnomalies(
+            connector=connector, s3_parameters=s3_parameters, arguments=arguments)
 
-    @dask.delayed
-    def __set_transforms(self, data: pd.DataFrame, scaling: dict) -> mr.Master:
+    def exc(self, attribute: atr.Attribute, data: pd.DataFrame, specification: sc.Specification) -> pd.DataFrame:
         """
 
+        :param attribute:
         :param data:
-        :param scaling:
+        :param specification:
         :return:
         """
 
-        transforms = self.__scaling.transform(data=data, scaling=scaling)
+        transforms: pd.DataFrame = self.__scaling.transform(data=data, scaling=attribute.scaling)
+        master: mr.Master = mr.Master(data=data, transforms=transforms)
+        estimates: pd.DataFrame = self.__approximating.exc(
+            specification=specification, attribute=attribute, master=master)
+        estimates: pd.DataFrame = self.__plausible_anomalies.exc(
+            estimates=estimates.copy(), specification=specification)
 
-        return mr.Master(data=data, transforms=transforms)
-
-    def exc(self, specifications: list[sc.Specification]):
-        """
-
-        :param specifications:
-        :return:
-        """
-
-        __get_attributes = dask.delayed(src.inference.attributes.Attributes(arguments=self.__arguments).exc)
-        __get_data = dask.delayed(src.inference.data.Data(arguments=self.__arguments).exc)
-        __approximating = dask.delayed(src.inference.approximating.Approximating(arguments=self.__arguments).exc)
-        __persist = dask.delayed(src.inference.persist.Persist().exc)
-
-        computations = []
-        for specification in specifications:
-            attribute: atr.Attribute = __get_attributes(specification=specification)
-            data: pd.DataFrame = __get_data(specification=specification, attribute=attribute)
-            master: mr.Master = self.__set_transforms(data=data, scaling=attribute.scaling)
-            approximations: apr.Approximations = __approximating(
-                specification=specification, attribute=attribute, master=master)
-            message = __persist(specification=specification, approximations=approximations)
-            computations.append(message)
-
-        messages = dask.compute(computations, scheduler='processes', num_workers=int(0.5*self.__n_cores))[0]
-        logging.info(messages)
+        return estimates

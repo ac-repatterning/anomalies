@@ -3,8 +3,6 @@
 import pandas as pd
 
 import src.assets.cases
-import src.assets.filtering
-import src.assets.foci
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
 import src.functions.cache
@@ -28,19 +26,20 @@ class Metadata:
         self.__s3_parameters: s3p.S3Parameters = s3_parameters
         self.__arguments = arguments
 
-    def __filter(self, cases: pd.DataFrame, foci: pd.DataFrame) -> pd.DataFrame:
+    def __filter(self, cases: pd.DataFrame) -> pd.DataFrame:
         """
 
-        :param cases: The gauge stations that have model artefacts.<br>
-        :param foci: The gauge stations within a current warning area.<br>
         :return:
         """
 
-        # filter in relation to context - inspect, live, on demand via input argument, service
-        metadata = src.assets.filtering.Filtering(
-            cases=cases.copy(), foci=foci.copy(), arguments=self.__arguments).exc()
+        values: list = self.__arguments.get('series').get('excerpt')
 
-        return metadata
+        if values is None:
+            return cases
+
+        frame = cases.copy().loc[cases['ts_id'].isin(values), :]
+
+        return frame
 
     def exc(self) -> pd.DataFrame:
         """
@@ -52,7 +51,4 @@ class Metadata:
         cases = src.assets.cases.Cases(
             service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc()
 
-        # gauge stations identifiers vis-à-vis warning period
-        foci = src.assets.foci.Foci(s3_parameters=self.__s3_parameters).exc()
-
-        return self.__filter(cases=cases, foci=foci)
+        return self.__filter(cases=cases)

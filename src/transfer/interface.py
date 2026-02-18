@@ -37,7 +37,8 @@ class Interface:
         self.__configurations = config.Config()
 
         # Metadata dictionary
-        self.__metadata = src.transfer.metadata.Metadata(connector=connector)
+        self.__metadata: dict = src.transfer.metadata.Metadata(
+            connector=connector, s3_parameters=self.__s3_parameters).exc()
 
     def __get_metadata(self, frame: pd.DataFrame) -> pd.DataFrame:
         """
@@ -46,10 +47,8 @@ class Interface:
         :return:
         """
 
-        _metadata = self.__metadata.exc(name='metadata.json')
-
         frame = frame.assign(
-            metadata = frame['section'].map(lambda x: _metadata[x]))
+            metadata = frame['section'].map(lambda x: self.__metadata[x]))
 
         return frame
 
@@ -60,10 +59,9 @@ class Interface:
         :return:
         """
 
-        # Depending on the request, clear the targeted storage area first
-        if self.__arguments.get('request') in {0, 3}:
-            src.transfer.cloud.Cloud(
-                service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc()
+        # Prepare vis-à-vis stage
+        src.transfer.cloud.Cloud(
+            service=self.__service, s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc()
 
         # Finally, transfer
         messages = src.s3.ingress.Ingress(
@@ -83,7 +81,9 @@ class Interface:
             prefix=self.__arguments.get('prefix').get('destination') + '/')
 
         if strings.empty:
-            logging.info('There are no inference artefacts to transfer.')
+            logging.info('Nothing to transfer.')
         else:
             strings = self.__get_metadata(frame=strings.copy())
+            logging.info(strings)
+
             self.__transfer(strings=strings)

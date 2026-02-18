@@ -22,15 +22,14 @@ def main():
     logger.info('GPU: %s', gpu)
 
     # Assets
-    limits = src.limits.Limits(arguments=arguments).exc()
     specifications = src.assets.interface.Interface(
-        service=service, s3_parameters=s3_parameters, arguments=arguments).exc(limits=limits)
+        service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
 
-    # Inference
-    src.inference.interface.Interface(
-        arguments=arguments).exc(specifications=specifications)
+    # ...
+    src.algorithms.interface.Interface(
+        connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc(
+        specifications=specifications)
 
-    # Transfer
     src.transfer.interface.Interface(
         connector=connector, service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
 
@@ -51,12 +50,11 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     # Modules
+    import src.algorithms.interface
     import src.assets.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
-    import src.inference.interface
-    import src.limits
     import src.preface.interface
     import src.specific
     import src.transfer.interface
@@ -65,9 +63,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--codes', type=specific.codes,
                         help='Expects a string of one or more comma separated gauge time series codes.')
-    parser.add_argument('--request', type=specific.request, default=0,
-                        help=('Expects an integer; 0 initial, 1 live, '
-                              '2 on-demand inference, 3 warning period inference.'))
+    parser.add_argument('--stage', type=specific.stage, default='live',
+                        help=('Expects a string; either (a) initial, i.e., anomaly detection via pre-live models, '
+                              'or (b) live, i.e., anomaly detection via live models'))
     args: argparse.Namespace = parser.parse_args()
 
     connector: boto3.session.Session

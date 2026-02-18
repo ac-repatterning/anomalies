@@ -5,30 +5,27 @@ import pandas as pd
 import tensorflow as tf
 
 import config
-import src.elements.approximations as apr
 import src.elements.attribute as atr
 import src.elements.master as mr
 import src.elements.specification as sc
 import src.inference.estimate
-import src.inference.forecast
 
 
 class Approximating:
     """
-    Under Development
+    Approximating
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self):
         """
 
-        :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
+        Constructor
         """
 
-        self.__arguments = arguments
-
-        # configurations
         self.__configurations = config.Config()
 
+
+    # noinspection PyUnresolvedReferences
     def __get_model(self, specification: sc.Specification):
         """
 
@@ -42,7 +39,7 @@ class Approximating:
         return tf.keras.models.load_model(
             filepath=os.path.join(path, 'model'))
 
-    def exc(self, specification: sc.Specification, attribute: atr.Attribute, master: mr.Master) -> apr.Approximations:
+    def exc(self, specification: sc.Specification, attribute: atr.Attribute, master: mr.Master) -> pd.DataFrame:
         """
 
         :param specification: Refer to src.elements.specification.py
@@ -55,7 +52,5 @@ class Approximating:
 
         estimates: pd.DataFrame = src.inference.estimate.Estimate(attribute=attribute).exc(
             model=model, master=master)
-        forecasts: pd.DataFrame = src.inference.forecast.Forecast(attribute=attribute, arguments=self.__arguments).exc(
-            model=model, master=master, specification=specification)
 
-        return apr.Approximations(estimates=estimates, forecasts=forecasts)
+        return estimates

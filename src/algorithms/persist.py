@@ -5,7 +5,6 @@ import os
 import pandas as pd
 
 import config
-import src.elements.approximations as apr
 import src.elements.specification as sc
 import src.functions.objects
 
@@ -48,19 +47,27 @@ class Persist:
         return self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{name}.json'))
 
-    def exc(self, specification: sc.Specification, approximations: apr.Approximations) -> str:
+    def exc(self, specification: sc.Specification, estimates: pd.DataFrame) -> str:
         """
-        * Add an absolute percentage error field to the `approximations.estimates` frame<br>
-        * Per `approximations` frame drop `date` & `ts_id`<br><br>
 
         :param specification: <br>
-        :param approximations: <br>
+        :param estimates: <br>
         :return:
         """
 
+        p_anomalies = estimates.copy().loc[estimates['p_anomaly'] != 0, ['timestamp', 'original', 'measure', 'p_anomaly']]
+        gaps = estimates.copy().loc[estimates['gap'] != 0, ['timestamp', 'original', 'measure', 'gap']]
+        missing = estimates.copy().loc[estimates['missing'] != 0, ['timestamp', 'original', 'measure', 'missing']]
+        asymptotes = estimates.copy().loc[estimates['asymptote'] != 0, ['timestamp', 'original', 'measure', 'asymptote']]
+        extremes = estimates.copy().loc[estimates['extreme'] != 0, ['timestamp', 'original', 'measure', 'extreme']]
+
         nodes = {
-            'estimates': self.__get_node(approximations.estimates.drop(columns=['date', 'ts_id'])),
-            'forecasts': self.__get_node(approximations.forecasts.drop(columns=['date', 'ts_id']))
+            'estimates': self.__get_node(blob=estimates.drop(columns=['date', 'ts_id'])),
+            'p_anomalies': self.__get_node(blob=p_anomalies),
+            'gaps': self.__get_node(blob=gaps),
+            'missing': self.__get_node(blob=missing),
+            'asymptotes': self.__get_node(blob=asymptotes),
+            'extremes': self.__get_node(blob=extremes)
         }
         nodes.update(specification._asdict())
 

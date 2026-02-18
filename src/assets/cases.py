@@ -100,9 +100,8 @@ class Cases:
         :return:
         """
 
-        stage = self.__arguments.get('prefix').get('model')
         paths = self.__pre.objects(
-            prefix=self.__arguments.get('modelling').get('path').get(stage), delimiter='/')
+            prefix=self.__arguments.get('prefix').get('artefacts'), delimiter='/')
         paths = self.__pre.objects(paths[0], delimiter='/')
 
         computations = []

@@ -1,14 +1,12 @@
 """Module data.py"""
-import glob
-import os
 
 import dask.dataframe as ddf
 import numpy as np
 import pandas as pd
 
-import config
 import src.elements.attribute as atr
 import src.elements.specification as sc
+import src.timings
 
 
 class Data:
@@ -23,11 +21,12 @@ class Data:
         """
 
         frequency = 1.0 if arguments.get('frequency') == "h" else float(arguments.get('frequency').removesuffix("h"))
-        days = arguments.get('prefix').get('n_samples_use_')
+        days = round(365 * arguments.get('spanning'))
         self.__n_samples = int(days * 24 / frequency)
 
-        # Configurations
-        self.__configurations = config.Config()
+        # Instances
+        self.__timings: list = src.timings.Timings(arguments=arguments).exc()
+        self.__endpoint: str = arguments.get('additions').get('modelling_data_source')
 
         # Focus
         self.__dtype = {'timestamp': np.float64, 'ts_id': np.float64, 'measure': float}
@@ -51,19 +50,6 @@ class Data:
 
         return block
 
-    def __get_listing(self, specification: sc.Specification) -> list[str]:
-        """
-
-        :param specification:
-        :return:
-        """
-
-        listing = glob.glob(
-            pathname=os.path.join(self.__configurations.data_, 'source', str(specification.catchment_id),
-                                  str(specification.ts_id), '*.csv'))
-
-        return listing
-
     @staticmethod
     def __set_missing(data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -74,6 +60,7 @@ class Data:
         :return:
         """
 
+        data['original'] = data.copy()['measure']
         data['measure'] = data['measure'].ffill().values
 
         return data
@@ -86,7 +73,8 @@ class Data:
         :return:
         """
 
-        listing =  self.__get_listing(specification=specification)
+        listing = [f'{self.__endpoint}/{specification.catchment_id}/{specification.ts_id}/{timing}.csv'
+                   for timing in self.__timings ]
 
         # The data
         data = self.__get_data(listing=listing)

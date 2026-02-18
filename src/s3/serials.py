@@ -1,15 +1,14 @@
-"""Module configurations.py"""
+"""Module serials.py"""
+
 import json
 
 import boto3
 import yaml
 
-import config
-import src.functions.secret
 import src.s3.unload
 
 
-class Configurations:
+class Serials:
     """
     Notes<br>
     ------<br>
@@ -17,18 +16,18 @@ class Configurations:
     This class reads-in Amazon S3 (Simple Storage Service) based configuration files.
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, connector: boto3.session.Session, bucket_name: str):
         """
 
         :param connector: An instance of boto3.session.Session
+        :param bucket_name:
         """
 
         # An instance for S3 interactions
-        self.__s3_client: boto3.session.Session.client = connector.client(
-            service_name='s3')
+        self.__s3_client: boto3.session.Session.client = connector.client(service_name='s3')
 
         # An instance for Secrets Manager interactions.
-        self.__secret = src.functions.secret.Secret(connector=connector)
+        self.__bucket_name = bucket_name
 
     def __buffer(self, key_name: str):
         """
@@ -38,8 +37,7 @@ class Configurations:
         """
 
         buffer = src.s3.unload.Unload(s3_client=self.__s3_client).exc(
-            bucket_name=self.__secret.exc(secret_id=config.Config().project_key_name, node='configurations'),
-            key_name=key_name)
+            bucket_name=self.__bucket_name, key_name=key_name)
 
         return buffer
 
@@ -58,7 +56,7 @@ class Configurations:
 
         return data
 
-    def objects(self, key_name: str):
+    def objects(self, key_name: str) -> dict | list[dict]:
         """
 
         :param key_name: <prefix> + <file name, including extension>

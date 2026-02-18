@@ -1,11 +1,10 @@
 """Module s3_parameters.py"""
+
 import boto3
 
 import config
 import src.elements.s3_parameters as s3p
-import src.functions.secret
-import src.functions.serial
-import src.s3.configurations
+import src.s3.serials
 import src.s3.unload
 
 
@@ -23,19 +22,19 @@ class S3Parameters:
     https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-express-Regions-and-Zones.html
     """
 
-    def __init__(self, connector: boto3.session.Session):
+    def __init__(self, connector: boto3.session.Session, groups: dict):
         """
 
         :param connector: A boto3 session instance, it retrieves the developer's <default> Amazon
                           Web Services (AWS) profile details, which allows for programmatic interaction with AWS.
+        :param groups:
         """
 
         self.__connector = connector
 
         # Hence
         self.__configurations = config.Config()
-        self.__project_key_name = self.__configurations.project_key_name
-        self.__secret = src.functions.secret.Secret(connector=connector)
+        self.__groups = groups
 
     def __get_dictionary(self) -> dict:
         """
@@ -44,8 +43,9 @@ class S3Parameters:
             A dictionary, or excerpt dictionary, of YAML file contents
         """
 
-        data = src.s3.configurations.Configurations(
-            connector=self.__connector).serial(key_name=self.__configurations.s3_parameters_key)
+        data = src.s3.serials.Serials(
+            connector=self.__connector, bucket_name=self.__groups.get('configurations')).serial(
+            key_name=self.__configurations.s3_parameters_key)
 
         return data['parameters']
 
@@ -60,10 +60,10 @@ class S3Parameters:
         s3_parameters = s3p.S3Parameters(**dictionary)
 
         # Parsing variables
-        region_name = self.__secret.exc(secret_id=self.__project_key_name, node='region')
-        internal = self.__secret.exc(secret_id=self.__project_key_name, node='internal')
-        external = self.__secret.exc(secret_id=self.__project_key_name, node='external')
-        configurations = self.__secret.exc(secret_id=self.__project_key_name, node='configurations')
+        region_name = self.__groups.get('region')
+        internal = self.__groups.get('internal')
+        external = self.__groups.get('external')
+        configurations = self.__groups.get('configurations')
 
         s3_parameters: s3p.S3Parameters = s3_parameters._replace(
             location_constraint=region_name, region_name=region_name,

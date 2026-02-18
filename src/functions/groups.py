@@ -1,19 +1,13 @@
-"""
-Module secret.py
-"""
+"""Module groups.py"""
+
 import json
 
 import boto3
 import botocore.exceptions
 
 
-class Secret:
+class Groups:
     """
-    <b>Description</b><br>
-    ------------<br>
-    This class will retrieve a requested secret.<br><br>
-
-
     <b>References</b><br>
     ------------<br>
 
@@ -32,11 +26,10 @@ class Secret:
         # self.__session = boto3.session.Session()
         self.__secrets_manager = connector.client(service_name='secretsmanager')
 
-    def __get__value(self, secret_id: str) -> str:
+    def __get__value(self, project_key_name: str) -> str:
         """
-        The reader of a secret key's value.
 
-        :param secret_id: The identification code of the secret
+        :param project_key_name: An identifier's label
 
         Returns:
             _type_: str
@@ -44,27 +37,26 @@ class Secret:
 
         try:
             secret_value: dict = self.__secrets_manager.get_secret_value(
-                SecretId=secret_id)
+                SecretId=project_key_name)
         except botocore.exceptions.ClientError as err:
             raise err
 
         return secret_value['SecretString']
 
-    def exc(self, secret_id: str, node: str = None) -> str:
+    def exc(self, project_key_name: str, node: str = None) -> str | dict:
         """
-        Gets the value of a secret key.
 
-        :param secret_id: The identification code of the secret
+        :param project_key_name: An identifier's label
         :param node: A child element
 
         Returns:
             _type_: str
         """
 
-        expression = self.__get__value(secret_id=secret_id)
+        expression = self.__get__value(project_key_name=project_key_name)
         dictionary: dict = json.loads(expression)
 
         if node is None:
-            return dictionary[secret_id]
+            return dictionary
 
         return dictionary[node]

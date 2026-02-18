@@ -44,7 +44,7 @@ class Directives:
 
         return state.returncode
 
-    def unload_(self, key: str, target: str, extra: str = ''):
+    def unload_(self, key: str, target: str, extra: str = '') -> int:
         """
 
         :param key:
@@ -63,13 +63,14 @@ class Directives:
 
         return state.returncode
 
-    def unload(self, source_bucket: str, origin: str, target: str) -> int:
+    def unload(self, source_bucket: str, origin: str, target: str, recursive: str='--recursive') -> int:
         """
 
         :param source_bucket: An Amazon S3 (Simple Storage Service)
         :param origin: The prefix between the source bucket & one or more key names; starts and
                        ends without a stroke, i.e., /.
         :param target: A local directory
+        :param recursive
         :return:
         """
 
@@ -78,7 +79,7 @@ class Directives:
 
         # Hence
         destination = target.replace(os.getcwd() + os.path.sep, '')
-        source = f"s3://{source_bucket}/{origin}/"
-        state = subprocess.run(f"aws s3 cp {source} {destination}/ --recursive", shell=True, check=True)
+        source = f"s3://{source_bucket}/{origin}"
+        state = subprocess.run(f"aws s3 cp {source} {destination} {recursive}", shell=True, check=True)
 
         return state.returncode

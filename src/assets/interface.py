@@ -1,11 +1,11 @@
 """Module interface.py"""
+
 import pandas as pd
 
 import src.assets.artefacts
 import src.assets.menu
 import src.assets.metadata
 import src.assets.reference
-import src.assets.source
 import src.assets.specifications
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
@@ -31,10 +31,9 @@ class Interface:
         self.__s3_parameters: s3p.S3Parameters = s3_parameters
         self.__arguments = arguments
 
-    def exc(self, limits: list) -> list[sc.Specification]:
+    def exc(self) -> list[sc.Specification]:
         """
 
-        :param limits:
         :return:
         """
 
@@ -56,7 +55,5 @@ class Interface:
         # Unload model artefacts
         src.assets.artefacts.Artefacts(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
-        src.assets.source.Source(
-            arguments=self.__arguments, limits=limits).exc(specifications=specifications)
 
         return specifications

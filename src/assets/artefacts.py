@@ -31,23 +31,31 @@ class Artefacts:
         self.__directives =  src.s3.directives.Directives()
         self.__directories = src.functions.directories.Directories()
 
-    def __acquire(self, specification: sc.Specification):
+    def __get_artefacts(self, specification: sc.Specification):
         """
+        parts = [ f"--include \'{timing}*\'" for timing in self.__timings]
+        extra = '--recursive ' + "--exclude \'*\' " + ' '.join(parts)
 
         :param specification: Refer to src.elements.specification.py
         :return:
         """
 
-        stage = self.__arguments.get('prefix').get('model')
-        origin = (f'{self.__arguments.get('modelling').get('path').get(stage)}/'
+        origin = (f'{self.__arguments.get('prefix').get('artefacts')}/'
                   f'{specification.catchment_id}/{specification.ts_id}')
         target = os.path.join(
             self.__configurations.data_, 'artefacts', str(specification.catchment_id), str(specification.ts_id))
 
         self.__directories.create(target)
 
-        return self.__directives.unload(
-            source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
+        # key ... , target, extra
+        key = f's3://{self.__s3_parameters.internal}/{origin}'
+        parts = [ f"--include \'{part}*\'" for part in ['modelling', 'scaling', 'model/']]
+        extra = '--recursive ' + "--exclude \'*\' " + ' '.join(parts)
+
+        # self.__directives.unload(
+        #     source_bucket=self.__s3_parameters.internal, origin=origin, target=target)
+
+        return self.__directives.unload_(key=key, target=target, extra=extra)
 
     def exc(self, specifications: list[sc.Specification]):
         """
@@ -57,7 +65,7 @@ class Artefacts:
         """
 
         # Or
-        computations = [dask.delayed(self.__acquire)(specification=specification)
+        computations = [dask.delayed(self.__get_artefacts)(specification=specification)
                         for specification in specifications]
 
         # Compute
