@@ -19,8 +19,6 @@ class Specification(typing.NamedTuple):
         The identification code of a time series.<br><br>
     <b>ts_name</b>: int<br>
         The granularity-label of the time series, e.g., <i>15minute</i>.<br><br>
-    <b>starting</b>: str<br>
-        The historical starting date & time string of the gauge's series.<br><br>
     <b>longitude</b>: float<br>
         The x geographic coördinate.<br><br>
     <b>latitude</b>: float<br>
@@ -37,7 +35,6 @@ class Specification(typing.NamedTuple):
     catchment_name: str
     ts_id: int
     ts_name: str
-    starting: str
     latitude: float
     longitude: float
     river_name: str
