@@ -71,7 +71,6 @@ class Interface:
 
     def exc(self):
         """
-        self.__transfer(strings=strings)
 
         :return:
         """
@@ -87,3 +86,5 @@ class Interface:
         else:
             strings = self.__get_metadata(frame=strings.copy())
             logging.info(strings)
+
+            self.__transfer(strings=strings)
