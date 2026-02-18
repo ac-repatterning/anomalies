@@ -1,7 +1,5 @@
 """Module inference/interface.py"""
 
-import multiprocessing
-
 import boto3
 import dask
 import pandas as pd
@@ -36,7 +34,6 @@ class Interface:
         self.__arguments = arguments
 
         # Setting up
-        self.__n_cores = multiprocessing.cpu_count()
         self.__get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
         self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface(
