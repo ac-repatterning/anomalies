@@ -1,11 +1,13 @@
 """Module inference/interface.py"""
 import logging
+import os
 import multiprocessing
 
 import boto3
 import dask
 import pandas as pd
 
+import config
 import src.algorithms.asymptote
 import src.algorithms.attributes
 import src.algorithms.data
@@ -68,7 +70,9 @@ class Interface:
             computations.append(vector)
 
         vectors = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
-        logging.info(vectors)
-
         records = pd.DataFrame.from_records(vectors)
-        logging.info(records.drop(columns=['ts_name', 'starting']))
+        records.drop(columns=['ts_name', 'starting'], inplace=True)
+        logging.info(records)
+
+        records.to_json(
+            path_or_buf=os.path.join(config.Config().perspective_, 'perspective.json'), orient='index')
