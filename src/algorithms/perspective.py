@@ -1,3 +1,4 @@
+"""Module perspective.py"""
 import os
 
 import pandas as pd
@@ -6,6 +7,11 @@ import config
 
 
 class Perspective:
+    """
+
+    An overarching summary of the number of time points that each series' gaps, missing
+    points, asymptotes, etc, spans.
+    """
 
     def __init__(self):
         """
