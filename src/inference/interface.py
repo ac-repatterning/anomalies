@@ -41,6 +41,9 @@ class Interface:
         :return:
         """
 
+        if data.empty | (not attribute.scaling) | (not attribute.modelling) :
+            return data
+
         transforms: pd.DataFrame = self.__scaling.transform(data=data, scaling=attribute.scaling)
         master: mr.Master = mr.Master(data=data, transforms=transforms)
         estimates: pd.DataFrame = self.__approximating.exc(
