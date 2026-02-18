@@ -56,12 +56,14 @@ class Persist:
         """
 
         gaps = estimates.copy().loc[estimates['gap'] != 0, ['timestamp', 'original', 'measure', 'gap']]
+        missing = estimates.copy().loc[estimates['missing'] != 0, ['timestamp', 'original', 'measure', 'missing']]
         asymptotes = estimates.copy().loc[estimates['asymptote'] != 0, ['timestamp', 'original', 'measure', 'asymptote']]
         extremes = estimates.copy().loc[estimates['extreme'] != 0, ['timestamp', 'original', 'measure', 'extreme']]
 
         nodes = {
             'estimates': self.__get_node(blob=estimates.drop(columns=['date', 'ts_id'])),
             'gaps': self.__get_node(blob=gaps),
+            'missing': self.__get_node(blob=missing),
             'asymptotes': self.__get_node(blob=asymptotes),
             'extremes': self.__get_node(blob=extremes)
         }
