@@ -2,7 +2,6 @@
 Module setup.py
 """
 import sys
-import os
 
 import config
 import src.elements.s3_parameters as s3p
