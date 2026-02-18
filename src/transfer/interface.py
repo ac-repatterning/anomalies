@@ -79,7 +79,6 @@ class Interface:
         strings: pd.DataFrame = src.transfer.dictionary.Dictionary().exc(
             path=self.__configurations.pathway_, extension='*',
             prefix=self.__arguments.get('prefix').get('destination') + '/')
-        logging.info(strings)
 
         if strings.empty:
             logging.info('Nothing to transfer.')
