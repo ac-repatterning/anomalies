@@ -22,8 +22,8 @@ class Config:
         """
 
         self.s3_parameters_key = 's3_parameters.yaml'
-        self.arguments_key = f'data/anomalies/arguments.json'
-        self.metadata_ = ''
+        self.arguments_key = 'data/anomalies/arguments.json'
+        self.metadata_key = 'data/anomalies/metadata.json'
 
 
         '''
