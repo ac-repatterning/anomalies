@@ -11,7 +11,7 @@ import src.algorithms.attributes
 import src.algorithms.data
 import src.algorithms.gap
 import src.algorithms.limits
-import src.algorithms.persist
+import src.algorithms.perspective
 import src.elements.attribute as atr
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
@@ -52,7 +52,7 @@ class Interface:
 
         __gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
         __asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
-        __persist = dask.delayed(src.algorithms.persist.Persist().exc)
+        __perspective = dask.delayed(src.algorithms.perspective.Perspective().exc)
 
         computations = []
         for specification in specifications:
@@ -62,10 +62,13 @@ class Interface:
                 attribute=attribute, data=data, specification=specification)
             __appending_gap: pd.DataFrame = __gap(data=__estimates)
             __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
-            __appending_limits: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
+            estimates: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
 
-            message = __persist(specification=specification, estimates=__appending_limits)
-            computations.append(message)
+            vector = __perspective(frame=estimates, specification=specification)
+            computations.append(vector)
 
-        messages = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
-        logging.info(messages)
+        vectors = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
+        logging.info(vectors)
+
+        records = pd.DataFrame.from_records(vectors)
+        logging.info(records.drop(columns=['ts_name', 'starting']))
