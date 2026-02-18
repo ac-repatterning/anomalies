@@ -11,11 +11,11 @@ import src.algorithms.gap
 import src.algorithms.limits
 import src.algorithms.occurrences
 import src.algorithms.perspective
+import src.assets.menu
 import src.elements.attribute as atr
 import src.elements.s3_parameters as s3p
 import src.elements.specification as sc
 import src.inference.interface
-import src.assets.menu
 
 
 class Interface:
