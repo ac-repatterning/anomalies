@@ -35,7 +35,7 @@ class Limits:
         # Persist
         self.__persist = src.algorithms.persist.Persist()
 
-    def exc(self, data: pd.DataFrame, specification: sc.Specification):
+    def exc(self, data: pd.DataFrame, specification: sc.Specification) -> pd.DataFrame:
         """
 
         :param data:
@@ -43,8 +43,13 @@ class Limits:
         :return:
         """
 
+        if data.empty:
+            return data
+
+        # A set of gauge time series quantiles
         definitions: dict = self.__quantiles.get(str(specification.ts_id))
 
+        # Hence
         frame = data.copy()
         points: np.ndarray = frame['original'].values
         booleans: np.ndarray = (points < definitions.get('e_l_whisker')) | (points > definitions.get('e_u_whisker'))

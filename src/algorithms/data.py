@@ -31,7 +31,7 @@ class Data:
         # Focus
         self.__dtype = {'timestamp': np.float64, 'ts_id': np.float64, 'measure': float}
 
-    def __get_data(self, listing: list[str]):
+    def __get_data(self, listing: list[str]) -> pd.DataFrame:
         """
 
         :param listing:
@@ -41,8 +41,8 @@ class Data:
         try:
             block: pd.DataFrame = ddf.read_csv(
                 listing, header=0, usecols=list(self.__dtype.keys()), dtype=self.__dtype).compute()
-        except ImportError as err:
-            raise err from err
+        except ImportError:
+            return pd.DataFrame()
 
         block.reset_index(drop=True, inplace=True)
         block.sort_values(by='timestamp', ascending=True, inplace=True)
@@ -78,11 +78,18 @@ class Data:
 
         # The data
         data = self.__get_data(listing=listing)
+        if data.empty:
+            return data
+
+        # Missing
         data = self.__set_missing(data=data.copy())
 
         # Filter
-        n_samples_seen_ = attribute.scaling.get('n_samples_seen_')
-        data = data.copy().tail(min(n_samples_seen_, self.__n_samples))
+        if attribute.scaling:
+            n_samples_seen_ = attribute.scaling.get('n_samples_seen_')
+            data = data.copy().tail(min(n_samples_seen_, self.__n_samples))
+        else:
+            data = data.copy().tail(self.__n_samples)
 
         # datetime
         data['date'] = pd.to_datetime(data['timestamp'], unit='ms')

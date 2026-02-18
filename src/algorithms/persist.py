@@ -55,7 +55,11 @@ class Persist:
         :return:
         """
 
-        p_anomalies = estimates.copy().loc[estimates['p_anomaly'] != 0, ['timestamp', 'original', 'measure', 'p_anomaly']]
+        if 'p_anomaly' in list(estimates.columns):
+            p_anomalies = estimates.copy().loc[estimates['p_anomaly'] != 0, ['timestamp', 'original', 'measure', 'p_anomaly']]
+        else:
+            p_anomalies = {}
+
         gaps = estimates.copy().loc[estimates['gap'] != 0, ['timestamp', 'original', 'measure', 'gap']]
         missing = estimates.copy().loc[estimates['missing'] != 0, ['timestamp', 'original', 'measure', 'missing']]
         asymptotes = estimates.copy().loc[estimates['asymptote'] != 0, ['timestamp', 'original', 'measure', 'asymptote']]

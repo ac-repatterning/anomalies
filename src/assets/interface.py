@@ -1,9 +1,10 @@
 """Module interface.py"""
 
+import typing
+
 import pandas as pd
 
 import src.assets.artefacts
-import src.assets.menu
 import src.assets.metadata
 import src.assets.reference
 import src.assets.specifications
@@ -31,7 +32,7 @@ class Interface:
         self.__s3_parameters: s3p.S3Parameters = s3_parameters
         self.__arguments = arguments
 
-    def exc(self) -> list[sc.Specification]:
+    def exc(self) -> typing.Tuple[list[sc.Specification], pd.DataFrame]:
         """
 
         :return:
@@ -46,9 +47,6 @@ class Interface:
             s3_parameters=self.__s3_parameters).exc(codes=metadata['ts_id'].unique())
         reference = reference.copy().merge(metadata, how='left', on=['catchment_id', 'ts_id'])
 
-        # Menu
-        src.assets.menu.Menu().exc(reference=reference)
-
         # Specifications
         specifications: list[sc.Specification] = src.assets.specifications.Specifications().exc(reference=reference)
 
@@ -56,4 +54,4 @@ class Interface:
         src.assets.artefacts.Artefacts(
             s3_parameters=self.__s3_parameters, arguments=self.__arguments).exc(specifications=specifications)
 
-        return specifications
+        return specifications, reference

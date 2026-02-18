@@ -14,5 +14,5 @@ class Attribute(typing.NamedTuple):
         The dictionary of the scaling arguments due to, derived from, a model's training data
     """
 
-    modelling: dict
-    scaling: dict
+    modelling: dict = {}
+    scaling: dict = {}

@@ -22,13 +22,13 @@ def main():
     logger.info('GPU: %s', gpu)
 
     # Assets
-    specifications = src.assets.interface.Interface(
+    specifications, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
 
     # ...
     src.algorithms.interface.Interface(
         connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc(
-        specifications=specifications)
+        specifications=specifications, reference=reference)
 
     src.transfer.interface.Interface(
         connector=connector, service=service, s3_parameters=s3_parameters, arguments=arguments).exc()

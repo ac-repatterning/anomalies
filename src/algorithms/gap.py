@@ -61,8 +61,10 @@ class Gap:
         :return:
         """
 
-        frame = data.copy()
+        if data.empty:
+            return data
 
+        frame = data.copy()
         __frame = pd.DataFrame(data={'original': frame['original'].values})
         __frame['boundary'] = self.__get_boundaries(_data=__frame['original'])
         __frame['element'] = __frame['boundary'].bfill()

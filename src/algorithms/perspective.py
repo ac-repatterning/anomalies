@@ -16,19 +16,20 @@ class Perspective:
     def __init__(self):
         """
 
+
         Constructor
         """
 
         self.__configurations = config.Config()
 
-    def exc(self, vectors: list[dict]):
+    def exc(self, records: pd.DataFrame):
         """
 
-        :param vectors:
+        :param records:
         :return:
         """
 
-        records = pd.DataFrame.from_records(vectors)
+
         records.drop(columns=['ts_name'], inplace=True)
 
         try:
