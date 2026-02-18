@@ -38,16 +38,16 @@ class PlausibleAnomalies:
         frame = pd.json_normalize(data=__aggregates.get('testing'), record_path='data')
         self.__aggregates = frame.set_axis(labels=__aggregates.get('testing').get('columns'), axis=1)
 
-    def __plausible_anomalies(self, estimates: pd.DataFrame, ts_id: int) -> np.ndarray:
+    def __plausible_anomalies(self, frame: pd.DataFrame, ts_id: int) -> np.ndarray:
         """
 
-        :param estimates:
+        :param frame:
         :param ts_id:
         :return:
         """
 
-        points: np.ndarray = estimates['p_error'].values
-        real: np.ndarray = estimates['original'].notna().values
+        points: np.ndarray = frame['p_error'].values
+        real: np.ndarray = frame['original'].notna().values
 
         # Quantiles & Boundaries
         quantiles = self.__aggregates.loc[self.__aggregates['ts_id'] == ts_id, :][:1].squeeze()
@@ -69,7 +69,9 @@ class PlausibleAnomalies:
         :return:
         """
 
-        p_anomalies = self.__plausible_anomalies(estimates=estimates.copy(), ts_id=specification.ts_id)
-        estimates = estimates.assign(p_anomaly=p_anomalies)
 
-        return estimates
+        frame = estimates.copy()
+        p_anomalies = self.__plausible_anomalies(frame=frame.copy(), ts_id=specification.ts_id)
+        frame = frame.assign(p_anomaly=p_anomalies)
+
+        return frame
