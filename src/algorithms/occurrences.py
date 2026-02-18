@@ -7,7 +7,7 @@ import src.elements.specification as sc
 class Occurrences:
     """
 
-    An overarching summary of the number of time points that each series' gaps, missing
+    The summary of the number of time points that a series' gaps, missing
     points, asymptotes, etc, spans.
     """
 
