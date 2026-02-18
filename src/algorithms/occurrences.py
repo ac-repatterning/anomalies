@@ -1,10 +1,10 @@
-"""Module perspective.py"""
+"""Module occurrences.py"""
 import pandas as pd
 
 import src.elements.specification as sc
 
 
-class Perspective:
+class Occurrences:
     """
 
     An overarching summary of the number of time points that each series' gaps, missing
