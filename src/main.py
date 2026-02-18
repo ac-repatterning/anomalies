@@ -30,6 +30,9 @@ def main():
         connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc(
         specifications=specifications)
 
+    src.transfer.interface.Interface(
+        connector=connector, service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
+
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
 
@@ -54,6 +57,7 @@ if __name__ == '__main__':
     import src.functions.cache
     import src.preface.interface
     import src.specific
+    import src.transfer.interface
 
     specific = src.specific.Specific()
     parser = argparse.ArgumentParser()
