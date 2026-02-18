@@ -39,6 +39,8 @@ class Interface:
         self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface(
             connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
+        self.__gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
+        self.__asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
         self.__limits = dask.delayed(src.algorithms.limits.Limits(
             connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
 
@@ -50,8 +52,6 @@ class Interface:
         :return:
         """
 
-        __gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
-        __asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
         __occurrences = dask.delayed(src.algorithms.occurrences.Occurrences().exc)
 
         computations = []
@@ -60,8 +60,8 @@ class Interface:
             data: pd.DataFrame = self.__get_data(specification=specification, attribute=attribute)
             __estimates: pd.DataFrame = self.__get_special_anomalies(
                 attribute=attribute, data=data, specification=specification)
-            __appending_gap: pd.DataFrame = __gap(data=__estimates)
-            __appending_asymptote: pd.DataFrame = __asymptote(data=__appending_gap)
+            __appending_gap: pd.DataFrame = self.__gap(data=__estimates)
+            __appending_asymptote: pd.DataFrame = self.__asymptote(data=__appending_gap)
             estimates: pd.DataFrame = self.__limits(data=__appending_asymptote, specification=specification)
 
             vector: dict = __occurrences(frame=estimates, specification=specification)
