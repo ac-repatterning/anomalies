@@ -41,7 +41,7 @@ class Data:
         try:
             block: pd.DataFrame = ddf.read_csv(
                 listing, header=0, usecols=list(self.__dtype.keys()), dtype=self.__dtype).compute()
-        except ImportError:
+        except OSError:
             return pd.DataFrame()
 
         block.reset_index(drop=True, inplace=True)
