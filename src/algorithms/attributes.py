@@ -32,7 +32,7 @@ class Attributes:
         try:
             with open(file=uri, mode='r', encoding='utf-8') as disk:
                 return json.load(fp=disk)
-        except ImportError:
+        except OSError:
             return {}
 
     def exc(self, specification: sc.Specification) -> atr.Attribute:
