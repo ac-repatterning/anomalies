@@ -1,5 +1,7 @@
 """Module inference/interface.py"""
 
+import multiprocessing
+
 import boto3
 import dask
 import pandas as pd
@@ -32,17 +34,17 @@ class Interface:
         :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
         """
 
-        self.__arguments = arguments
+        self.__n_cores = multiprocessing.cpu_count()
 
         # Setting up
         self.__get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
-        self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
+        self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=arguments).exc)
         self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface(
-            connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
-        self.__gap = dask.delayed(src.algorithms.gap.Gap(arguments=self.__arguments).exc)
-        self.__asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=self.__arguments).exc)
+            connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc)
+        self.__gap = dask.delayed(src.algorithms.gap.Gap(arguments=arguments).exc)
+        self.__asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=arguments).exc)
         self.__limits = dask.delayed(src.algorithms.limits.Limits(
-            connector=connector, s3_parameters=s3_parameters, arguments=self.__arguments).exc)
+            connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc)
 
     def exc(self, specifications: list[sc.Specification], reference: pd.DataFrame):
         """
@@ -67,7 +69,7 @@ class Interface:
             vector: dict = __occurrences(frame=estimates, specification=specification)
             computations.append(vector)
 
-        vectors: list[dict] = dask.compute(computations, scheduler='processes')[0]
+        vectors: list[dict] = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
         records = pd.DataFrame.from_records(vectors)
 
         # Menu
