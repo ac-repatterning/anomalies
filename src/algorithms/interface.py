@@ -69,7 +69,7 @@ class Interface:
             vector: dict = __occurrences(frame=estimates, specification=specification)
             computations.append(vector)
 
-        vectors: list[dict] = dask.compute(computations, scheduler='processes', num_workers=int(0.75*self.__n_cores))[0]
+        vectors: list[dict] = dask.compute(computations, scheduler='processes', num_workers=int(0.5*self.__n_cores))[0]
         records = pd.DataFrame.from_records(vectors)
 
         # Menu
