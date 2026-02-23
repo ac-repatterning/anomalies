@@ -46,8 +46,8 @@ class PlausibleAnomalies:
         # Quantiles & Boundaries
         quantiles = self.__aggregates.loc[self.__aggregates['ts_id'] == ts_id, :][:1].squeeze()
         median = quantiles.get('median_pe')
-        l_boundary = quantiles.get('l_whisker_pe_extreme') - (2.5 * (median - quantiles.get('l_whisker_pe_extreme')))
-        u_boundary = quantiles.get('u_whisker_pe_extreme') + (2.5 * (quantiles.get('u_whisker_pe_extreme') - median))
+        l_boundary = quantiles.get('l_whisker_pe_extreme') - (4 * (median - quantiles.get('l_whisker_pe_extreme')))
+        u_boundary = quantiles.get('u_whisker_pe_extreme') + (4 * (quantiles.get('u_whisker_pe_extreme') - median))
 
         # An anomaly vis-à-vis quantiles metrics?
         p_outliers = np.where((points < l_boundary) | (points > u_boundary), 1, 0)
