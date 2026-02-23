@@ -22,8 +22,8 @@ class Config:
         """
 
         self.s3_parameters_key = 's3_parameters.yaml'
-        self.arguments_key = 'data/anomalies/arguments.json'
-        self.metadata_key = 'data/anomalies/metadata.json'
+        self.arguments_key = 'data/detection/arguments.json'
+        self.metadata_key = 'data/detection/metadata.json'
 
 
         '''
@@ -39,7 +39,7 @@ class Config:
         self.data_ = os.path.join(os.getcwd(), 'data')
         self.warehouse = os.path.join(os.getcwd(), 'warehouse')
 
-        self.pathway_ = self.warehouse
+        self.pathway_ = os.path.join(self.warehouse, 'detection')
         self.points_ = os.path.join(self.pathway_, 'points')
         self.menu_ = os.path.join(self.pathway_, 'menu')
         self.perspective_ = os.path.join(self.pathway_, 'perspective')

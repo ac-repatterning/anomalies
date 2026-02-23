@@ -29,8 +29,8 @@ class Perspective:
         :return:
         """
 
-
         records.drop(columns=['ts_name'], inplace=True)
+        records.dropna(axis=0, how='all', inplace=True)
 
         try:
             records.to_json(

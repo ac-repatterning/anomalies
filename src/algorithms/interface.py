@@ -39,7 +39,7 @@ class Interface:
         # Setting up
         self.__get_attributes = dask.delayed(src.algorithms.attributes.Attributes().exc)
         self.__get_data = dask.delayed(src.algorithms.data.Data(arguments=arguments).exc)
-        self.__get_special_anomalies = dask.delayed(src.inference.interface.Interface(
+        self.__get_special_estimates = dask.delayed(src.inference.interface.Interface(
             connector=connector, s3_parameters=s3_parameters, arguments=arguments).exc)
         self.__gap = dask.delayed(src.algorithms.gap.Gap(arguments=arguments).exc)
         self.__asymptote = dask.delayed(src.algorithms.asymptote.Asymptote(arguments=arguments).exc)
@@ -60,7 +60,7 @@ class Interface:
         for specification in specifications:
             attribute: atr.Attribute = self.__get_attributes(specification=specification)
             data: pd.DataFrame = self.__get_data(specification=specification, attribute=attribute)
-            __estimates: pd.DataFrame = self.__get_special_anomalies(
+            __estimates: pd.DataFrame = self.__get_special_estimates(
                 attribute=attribute, data=data, specification=specification)
             __appending_gap: pd.DataFrame = self.__gap(data=__estimates)
             __appending_asymptote: pd.DataFrame = self.__asymptote(data=__appending_gap)

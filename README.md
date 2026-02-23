@@ -1,7 +1,7 @@
 
 <br>
 
-**Anomalies**
+**DETECTION**
 
 Via an applicable infrastructure set-up, e.g., via an Amazon Web Services EC2 (Elastic Compute Cloud) machine with <abbr title="Compute Unified Device Architecture">CUDA</abbr>[^1] graphics processing units:
 
