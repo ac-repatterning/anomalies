@@ -1,4 +1,4 @@
-name: 'Hydrography: Anomaly Detection'
+name: 'Hydrography: Detection'
 
 on: [push]
 
