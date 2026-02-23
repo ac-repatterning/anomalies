@@ -1,4 +1,4 @@
-"""Module plausible_anomalies.py"""
+"""Module questionable.py"""
 
 import boto3
 import numpy as np
@@ -9,7 +9,7 @@ import src.elements.specification as sc
 import src.s3.serials
 
 
-class PlausibleAnomalies:
+class Questionable:
     """
     Differences
     """
