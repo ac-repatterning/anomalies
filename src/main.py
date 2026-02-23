@@ -75,7 +75,7 @@ if __name__ == '__main__':
     connector, s3_parameters, service, arguments = src.preface.interface.Interface().exc(args=args)
 
     # noinspection DuplicatedCode
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2'
     gpu = tf.config.list_physical_devices('GPU')
 
     if arguments.get('cpu') | (not gpu):
