@@ -36,6 +36,23 @@ class Persist:
 
         return json.loads(string)
 
+    @staticmethod
+    def __p_anomalies(estimates: pd.DataFrame) -> pd.DataFrame:
+        """
+
+        :param estimates:
+        :return:
+        """
+
+        if 'p_anomaly' in list(estimates.columns):
+            p_anomalies: pd.DataFrame = estimates.copy().loc[
+                estimates['p_anomaly'] != 0, ['timestamp', 'original', 'measure', 'p_anomaly']]
+            p_anomalies: pd.DataFrame = p_anomalies.copy().loc[p_anomalies['p_anomaly'].notnull(), :]
+        else:
+            p_anomalies = pd.DataFrame()
+
+        return p_anomalies
+
     def __persist(self, nodes: dict, name: str) -> str:
         """
 
@@ -55,23 +72,19 @@ class Persist:
         :return:
         """
 
-        if 'p_anomaly' in list(estimates.columns):
-            p_anomalies = estimates.copy().loc[estimates['p_anomaly'] != 0, ['timestamp', 'original', 'measure', 'p_anomaly']]
-        else:
-            p_anomalies = {}
-
+        p_anomalies = self.__p_anomalies(estimates=estimates.copy())
         gaps = estimates.copy().loc[estimates['gap'] != 0, ['timestamp', 'original', 'measure', 'gap']]
         missing = estimates.copy().loc[estimates['missing'] != 0, ['timestamp', 'original', 'measure', 'missing']]
+
         asymptotes = estimates.copy().loc[estimates['asymptote'] != 0, ['timestamp', 'original', 'measure', 'asymptote']]
-        extremes = estimates.copy().loc[estimates['extreme'] != 0, ['timestamp', 'original', 'measure', 'extreme']]
+        asymptotes = asymptotes.copy().loc[asymptotes['asymptote'].notnull(), :]
 
         nodes = {
             'estimates': self.__get_node(blob=estimates.drop(columns=['date', 'ts_id'])),
             'p_anomalies': self.__get_node(blob=p_anomalies),
             'gaps': self.__get_node(blob=gaps),
             'missing': self.__get_node(blob=missing),
-            'asymptotes': self.__get_node(blob=asymptotes),
-            'extremes': self.__get_node(blob=extremes)
+            'asymptotes': self.__get_node(blob=asymptotes)
         }
         nodes.update(specification._asdict())
 
