@@ -1,5 +1,8 @@
 """Module data.py"""
 
+import datetime
+import time
+
 import dask.dataframe as ddf
 import numpy as np
 import pandas as pd
@@ -20,9 +23,9 @@ class Data:
         :param arguments: A set of arguments vis-à-vis computation & storage objectives.<br>
         """
 
-        frequency = 1.0 if arguments.get('frequency') == "h" else float(arguments.get('frequency').removesuffix("h"))
-        days = round(365 * arguments.get('spanning'))
-        self.__n_samples = int(days * 24 / frequency)
+        days = round(365.25 * arguments.get('spanning'))
+        as_from = datetime.date.today() - datetime.timedelta(days=days)
+        self.__starting = 1000 * time.mktime(as_from.timetuple())
 
         # Instances
         self.__timings: list = src.timings.Timings(arguments=arguments).exc()
@@ -85,13 +88,10 @@ class Data:
         data = self.__set_missing(data=data.copy())
 
         # Filter
-        if attribute.scaling:
-            n_samples_seen_ = attribute.scaling.get('n_samples_seen_')
-            data = data.copy().tail(min(n_samples_seen_, self.__n_samples))
-        else:
-            data = data.copy().tail(self.__n_samples)
+        data = data.copy().loc[data['timestamp'] >= self.__starting, :]
+        if data.empty:
+            return data
 
-        # datetime
         data['date'] = pd.to_datetime(data['timestamp'], unit='ms')
 
         return data
