@@ -2,13 +2,13 @@
 import boto3
 import pandas as pd
 
-import src.s3.serials
 import src.elements.s3_parameters as s3p
+import src.s3.serials
 
 
 class Aggregates:
     """
-
+    Reads-in training and testing stage error metrics.
     """
 
     def __init__(self, connector: boto3.session.Session, s3_parameters: s3p.S3Parameters, arguments: dict):
@@ -45,5 +45,9 @@ class Aggregates:
         return aggregates
 
     def __call__(self):
+        """
+
+        :return:
+        """
 
         return self.__get_aggregates()
